@@ -9,10 +9,105 @@ html,body{
   height:100%;
   overflow:hidden;
   margin:0;
-  background:#eee;
 }
-button{
-  z-index:200;
+body{
+  background:#111;
+}
+#rest{
+  display:none;
+}
+#start-screen{
+  position:fixed;
+  top:0;
+  width:100%;
+  height:100%;
+  animation:blonk 6s linear infinite;
+}
+#logo>*,#logo-small>*,#computer>*,#friends>*{
+  position:absolute;
+  width:100%;
+  height:100%;
+  image-rendering:pixelated;
+  cursor:pointer;
+}
+#logo>*,#computer>*,#friends>*{
+  animation:blink 6s linear infinite;
+}
+#logo,#logo-small,#computer,#friends{
+  position:relative;
+}
+#logo{
+  top:3vw;
+  width:30vw;
+  height:20vw;
+  left:35vw;
+  pointer-events:none;
+}
+#logo-small{
+  position:fixed;
+  top:1vw;
+  left:1vw;
+  width:15vw;
+  height:10vw;
+}
+#computer,#friends{
+  width:40.5vw;
+  height:9vw;
+  left:29.75vw;
+  top:4vw;
+}
+#friends{
+  top:5vw;
+}
+#logo>*:first-child,#computer>*:first-child,#friends>*:first-child{
+  animation-delay:-6s;
+}
+#logo>*:nth-child(2),#computer>*:nth-child(2),#friends>*:nth-child(2){
+  animation-delay:-4s;
+}
+#logo>*:nth-child(3),#computer>*:nth-child(3),#friends>*:nth-child(3){
+  animation-delay:-2s;
+}
+@keyframes blink{
+  0%{opacity:1;}
+  33.332%{opacity:1;}
+  33.333%{opacity:0;}
+  99.999%{opacity:0;}
+  100%{opacity:1;}
+}
+@keyframes blonk{
+  0%{background:#5377ed;}
+  33.332%{background:#5377ed;}
+  33.333%{background:#eb5962;}
+  66.666%{background:#eb5962;}
+  66.667%{background:#57eb83;}
+  100%{background:#57eb83;}
+}
+.button{
+  position:fixed;
+  left:1vw;
+  top:11.5vw;
+  border:none;
+  cursor:pointer;
+  background-size:cover;
+  image-rendering:pixelated;
+}
+#restart{
+  width:5vw;
+  height:10vw;
+  background-image:url('assets/restart.png');
+}
+#add{
+  width:9.4444444444444444444444vw;
+  height:10vw;
+  left:6.5vw;
+  background-image:url('assets/plus.png');
+}
+#add.disabled{
+  filter:grayscale(100%) brightness(0.5);
+}
+#new{
+  left:10vw;
 }
 #card-container{
   position:fixed;
@@ -21,34 +116,25 @@ button{
   align-items:center;
   align-content:flex-end;
   justify-content:center;
-  filter:drop-shadow(0 0 .4vw #ccc);
-  
+
 }
 #card-container>*{
   flex:0 0 0;
-  border-radius:2vh;
-  background:#f8f8f8;
   text-align:center;
   cursor:pointer;
 }
-#card-container>*:hover{
-  background:#fff;
-  box-shadow:0 0 3vw 1vw #ccc;
-  z-index:100;
+#card-container>*:hover,.button:hover,#computer:hover,#friends:hover{
+  filter:brightness(0.8);
 }
-#card-container>*:hover.selected{
-  background:#fff;
-  box-shadow:0 0 .5vw #ccc;
-}
-#card-container>*.selected{
-  border-radius:1.8vh;
-  background:#f8f8f8;
+#card-container>*:focus,.button:focus,#computer:focus,#friends:focus{
+  outline:none;
+  filter:brightness(0.5);
 }
 @media (min-aspect-ratio:1/1){
   #card-container{
     width:64vw;
     height:100%;
-    right:16.5vw;
+    right:17vw;
   }
   #card-container.stretch{
     width:80vw;
@@ -56,18 +142,16 @@ button{
   }
   #card-container>*{
     width:15vw;
-    flex-basis:30vh;
-    max-height:30vh;
-    margin:.5vw;
+    flex-basis:calc(100vh/3 - 2vw);
+    max-height:calc(100vh/3 - 2vw);
+    margin:.25vw;
+    border:.5vw solid #000;
   }
   #card-container>*.selected{
     width:12vw;
-    flex-basis:calc(30vh - 3vw);
-    max-height:calc(30vh - 3vw);
-    margin:2vw;
-  }
-  .svg{
-    transform:rotate(90deg);
+    flex-basis:calc(29vh - 3vw);
+    max-height:calc(29vh - 3vw);
+    margin:1.8vw;
   }
 }
 @media (max-aspect-ratio:1/1){
@@ -78,22 +162,22 @@ button{
 }
 .svg{
   width:83.33%;
-  height:100%;
+  margin-top:5%;
+  height:90%;
   display:inline-block;
-  stroke-width:5px;
+  stroke-width:5%;
   pointer-events:none;
+  fill:#000;
+  stroke:#000;
 }
 .color0{
-  fill:#f00;
-  stroke:#f00;
+  background:#eb5962;
 }
 .color1{
-  fill:#0f0;
-  stroke:#0f0;
+  background:#57eb83;
 }
 .color2{
-  fill:#00f;
-  stroke:#00f;
+  background:#5377ed;
 }
 .opacity0{
   fill-opacity:0;
@@ -107,8 +191,32 @@ button{
     </style>
   </head>
   <body>
+    <div id='start-screen'>
+      <div id='logo'>
+        <img src='assets/logo-b.png'/>
+        <img src='assets/logo-r.png'/>
+        <img src='assets/logo-g.png'/>
+      </div>
+      <div id='computer' tabindex='1' onclick='singleplayer();' title='Play against the computer'>
+        <img src='assets/computer-g.png'/>
+        <img src='assets/computer-b.png'/>
+        <img src='assets/computer-r.png'/>
+      </div>
+      <div id='friends' tabindex='2' onclick='multiplayer();' title='Play against your friends'>
+        <img src='assets/friends-r.png'/>
+        <img src='assets/friends-g.png'/>
+        <img src='assets/friends-b.png'/>
+      </div>
+    </div>
+    <div id='rest'>
+    <div id='logo-small' onclick='back();' title='back to menu'>
+      <img src='assets/logo-r.png'>
+      <img id='good' src='assets/logo-g.png'>
+      <img id='neutral' src='assets/logo-b.png'>
+    </div>
+    <div class='button' id='add' onclick='add();' title='add 3 cards'></div>
+    <div class='button' id='restart' onclick='start();' title='start a new game'></div>
     <div id='card-container'></div>
-    <button id='add' onclick='add();'>new</button>
     <svg>
       <!--
       0: rounded rectangle
@@ -116,7 +224,7 @@ button{
       2: diamond
       -->
       <symbol id='s00'>
-      <rect x='5' y='60' width='130' height='40' rx='20'/>
+      <rect x='5' y='62' width='130' height='34' rx='20'/>
       </symbol>
       <symbol id='s10'>
       <use href='#s00' transform='translate(0 -25)'/>
@@ -149,6 +257,7 @@ button{
       <use href='#s02' transform='translate(0 50)'/>
       </symbol>
     </svg>
+    </div>
     <script>
 
 //0:color
@@ -156,38 +265,79 @@ button{
 //2:parts
 //3:shape
 
-var container=document.getElementById('card-container'),
+var startScreen=document.getElementById('start-screen'),
+    rest=document.getElementById('rest'),
+    good=document.getElementById('good').style,
+    neutral=document.getElementById('neutral').style,
+    addb=document.getElementById('add');
+
+    container=document.getElementById('card-container'),
     card=[],
     svg=[],
     use=[],
-    color=['#f00','#0f0','#00f'],
+    color=['#eb5962','#57eb83','#5377ed'],
     
     selected=[],
     
     count=[[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
     
     tick=0;
-    
-    
-const allEqual = arr => arr.every( v => v === arr[0] ) //if all of an array are equal
+
+function removeBlock(){
+  rest.style.display='block';
+  startScreen.style.display='none';
+}
+
+function back(){
+  startScreen.style.display='block';
+  rest.style.display='none';
+}
+
+function singleplayer(){
+  removeBlock();
+}
+
+function multiplayer(){
+  removeBlock();
+}
+
+const allEqual = arr => arr.every( v => v === arr[0] ); //if all of an array are equal
 
 function isSet(){
   if((count[0].includes(3)||allEqual(count[0]))&&(count[1].includes(3)||allEqual(count[1]))&&(count[2].includes(3)||allEqual(count[2]))&&(count[3].includes(3)||allEqual(count[3]))){
-    for(var j=0;j<3;j++){
-      container.removeChild(selected[0]);
-      if(tick<1){
-        randomCard();
-      }
-    }
-    tick=0;
-    container.classList='';
+    
     console.log('set!');
+    neutral.opacity=0;
+    
+    setTimeout(function(){
+      
+      neutral.opacity=1;
+      for(var j=0;j<3;j++){
+        container.removeChild(selected[0]);
+        if(tick<1){
+          randomCard();
+        }
+      }
+      tick=0;
+      container.classList='';
+      
+    },150);
   }else{
-    for(var j=0;j<card.length;j++){
-      card[j].classList='';
-    }
+
+    neutral.opacity=0;
+    good.opacity=0;
+    
+    setTimeout(function(){
+
+      neutral.opacity=1;
+      good.opacity=1;
+      for(var j=0;j<card.length;j++){
+        card[j].classList.remove('selected');
+      }
+      count=[[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
+      
+    },150);
   }
-  count=[[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
 }
 
 function randomCard(last){
@@ -198,27 +348,63 @@ function randomCard(last){
     if(last==true){
       card[rand].style.order+=99;
     }
+    card[rand].setAttribute('tabindex',card[rand].style.order+100);
     card[rand].addEventListener('click',function(){
-      if(card[rand].classList=='selected'){
-        card[rand].classList='';
+      if(card[rand].classList.contains('selected')){
+        card[rand].classList.remove('selected');
         count[0][card[rand][0]]--;
         count[1][card[rand][1]]--;
         count[2][card[rand][2]]--;
         count[3][card[rand][3]]--;
       }else{
-        card[rand].classList='selected';
+        card[rand].classList.add('selected');
         count[0][card[rand][0]]++;
         count[1][card[rand][1]]++;
         count[2][card[rand][2]]++;
         count[3][card[rand][3]]++;
         selected = document.getElementsByClassName('selected');
         if(selected.length>2){
-          setInterval(isSet,150);
+          isSet();
         }
       }
-    })
+    });
   }else{
     randomCard(last);
+  }
+}
+
+function start(){
+  //for restarts
+  while(container.hasChildNodes()) {
+    container.removeChild(container.lastChild);
+  }
+  //generates all 81 unique cards
+  for(var i = 0;i<81;i++){
+    card[i] = document.createElement('div');
+    card[i][0] = i%3;
+    card[i][1] = Math.floor(i%9/3);
+    card[i][2] = Math.floor(i%27/9);
+    card[i][3] = Math.floor(i%81/27);
+    card[i].classList='color'+card[i][0]+' opacity'+card[i][1];
+    card[i].title = card[i][0]+'-'+card[i][1]+'-'+card[i][2]+'-'+card[i][3];
+    
+    svg[i] = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg[i].setAttribute('viewBox','0 0 140 160');
+    svg[i].classList='svg';
+    
+    use[i] = document.createElementNS('http://www.w3.org/2000/svg','use');
+    use[i].setAttribute('href','#s'+card[i][2]+card[i][3]);
+    
+    svg[i].appendChild(use[i]);
+    card[i].appendChild(svg[i]);
+    
+    card[i].style.display='none';
+  
+    container.appendChild(card[i]);
+  }
+  //selects 12
+  for(var i = 0;i<12;i++){
+    randomCard();
   }
 }
 
@@ -228,36 +414,14 @@ function add(){
       randomCard(true);
     }
     tick=1;
+    addb.classList='button';
   }
+  addb.classList='button disabled';
   container.classList='stretch';
 }
 
-for(var i = 0;i<81;i++){
-  card[i] = document.createElement('div');
-  card[i][0] = i%3;
-  card[i][1] = Math.floor(i%9/3);
-  card[i][2] = Math.floor(i%27/9);
-  card[i][3] = Math.floor(i%81/27);
-  card[i].title = card[i][0]+'-'+card[i][1]+'-'+card[i][2]+'-'+card[i][3];
-  
-  svg[i] = document.createElementNS('http://www.w3.org/2000/svg','svg');
-  svg[i].setAttribute('viewBox','0 0 140 160');
-  svg[i].classList='svg color'+card[i][0]+' opacity'+card[i][1];
-  
-  use[i] = document.createElementNS('http://www.w3.org/2000/svg','use');
-  use[i].setAttribute('href','#s'+card[i][2]+card[i][3]);
-  
-  svg[i].appendChild(use[i]);
-  card[i].appendChild(svg[i]);
-  
-  card[i].style.display='none';
+start();
 
-  container.appendChild(card[i]);
-}
-
-for(var i = 0;i<12;i++){
-  randomCard();
-}
     </script>
   </body>
 </html>
