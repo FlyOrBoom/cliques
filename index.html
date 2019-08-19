@@ -172,15 +172,15 @@ body{
   flex-basis:calc(100vh/3 - 5vw);
   max-height:calc(100vh/3 - 5vw);
   margin:1.75vw;
-  filter:brightness(0.6);
+  filter:brightness(.6);
   cursor:not-allowed;
 }
 #card-container>*:hover:not(.selected),.button:hover,#computer:hover,#friends:hover{
-  filter:brightness(0.8);
+  filter:brightness(.8);
 }
 #card-container>*:focus,.button:focus,#computer:focus,#friends:focus{
   outline:none;
-  filter:brightness(0.5);
+  filter:brightness(.5);
 }
 @media (max-aspect-ratio:1/1){
   #card-container>*{
@@ -303,6 +303,7 @@ var startScreen=document.getElementById('start-screen'),
     addb=document.getElementById('add'),
     
     scoreOf=[0,0,0,0],
+    theScore,
     scoreboard=[document.getElementById('score0'),document.getElementById('score1'),document.getElementById('score2'),document.getElementById('score3')],
 
     container=document.getElementById('card-container'),
@@ -315,10 +316,13 @@ var startScreen=document.getElementById('start-screen'),
     
     count=[[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
     
+    i=0,
     j=0,
+    k=0,
     tick=0;
 
 player.is=0;
+scoreboard.string=["url('assets/numbers.png') ","vw .5vw / 184.444vw no-repeat,","url('assets/points.png') 11.778vw .5vw / 1.667vw no-repeat,","#6e8 url('assets/point.png') 7.889vw .5vw / 3.333vw no-repeat"];
 
 function removeBlock(){
   rest.style.display='block';
@@ -361,19 +365,35 @@ function score(scoringPlayer,amountScored){
   
   scoreOf[scoringPlayer]+=amountScored;
   
-  if(scoreOf[scoringPlayer]>0){
-    if(scoreOf[scoringPlayer]<2){
-      scoreboard[scoringPlayer].style.background="no-repeat url('assets/numbers.png') 20vw .5vw / 184.444vw,no-repeat url('assets/numbers.png') 20vw .5vw / 184.444vw,no-repeat url('assets/numbers.png') "+((scoreOf[scoringPlayer]*(-16.667))-27)+"vw .5vw / 184.444vw,no-repeat url('assets/points.png') 20vw .5vw / 1.667vw,no-repeat #6e8 url('assets/point.png') 7.889vw .5vw / 3.333vw";
-    }else if(scoreOf[scoringPlayer]<10){
-      scoreboard[scoringPlayer].style.background="no-repeat url('assets/numbers.png') 20vw .5vw / 184.444vw,no-repeat url('assets/numbers.png') 20vw .5vw / 184.444vw,no-repeat url('assets/numbers.png') "+((scoreOf[scoringPlayer]*(-16.667))-27)+"vw .5vw / 184.444vw,no-repeat url('assets/points.png') 11.667vw .5vw / 1.667vw,no-repeat #6e8 url('assets/point.png') 7.889vw .5vw / 3.333vw";
-    }else if(scoreOf[scoringPlayer]<20){
-      scoreboard[scoringPlayer].style.background="no-repeat url('assets/numbers.png') 20vw .5vw / 184.444vw,no-repeat url('assets/numbers.png') "+(Math.floor(scoreOf[scoringPlayer]/10)*(-16.667)-28.667)+"vw .5vw / 184.444vw,no-repeat url('assets/numbers.png') "+((scoreOf[scoringPlayer]%10*(-16.667))-27)+"vw .5vw / 184.444vw,no-repeat url('assets/points.png') 11.667vw .5vw / 1.667vw,no-repeat #6e8 url('assets/point.png') 7.889vw .5vw / 3.333vw";
-    }else if(scoreOf[scoringPlayer]<100){
-      scoreboard[scoringPlayer].style.background="no-repeat url('assets/numbers.png') 20vw .5vw / 184.444vw,no-repeat url('assets/numbers.png') "+(Math.floor(scoreOf[scoringPlayer]/10)*(-16.667)-29.222)+"vw .5vw / 184.444vw,no-repeat url('assets/numbers.png') "+((scoreOf[scoringPlayer]%10*(-16.667))-27)+"vw .5vw / 184.444vw,no-repeat url('assets/points.png') 11.667vw .5vw / 1.667vw,no-repeat #6e8 url('assets/point.png') 7.889vw .5vw / 3.333vw";
+  scoreboard.draft='';
+  
+  theScore = scoreOf[scoringPlayer];
+  theScoreAbs = Math.abs(theScore);
+  
+  if(Math.abs(theScore-450)<550){ //if within limits
+    scoreboard.draft+=(scoreboard.string[0]+String((theScoreAbs%10)*(-16.667)-27)+scoreboard.string[1]); // [?][?][|x%10|]
+    if(theScore<0){ //if negative
+      if(theScore<-9){ //if -xx
+        scoreboard.draft+=(scoreboard.string[0]+'-14.996'+scoreboard.string[1]); //[-][?][?]
+      }else{ //if -x
+        scoreboard.draft+=(scoreboard.string[0]+'-12.772'+scoreboard.string[1]); //[?][-][?]
+      }
+    }
+    if(theScoreAbs>9){
+      scoreboard.draft+=(scoreboard.string[0]+String(Math.floor(theScoreAbs/10)*(-16.667)-29.222)+scoreboard.string[1]); //[?](x/10)[x%10]
+      if(theScore>99){
+        scoreboard.draft+=(String(Math.floor(theScore/100)*(-16.667)-31.444)+scoreboard.string[1]); //(x/100)[x/10][x%10]
+      }
+    }
+    if(theScoreAbs!==1){
+      scoreboard.draft+=scoreboard.string[2]; // [?][?][?][?][?](s)
     }
   }else{
-    scoreboard[scoringPlayer].style.background="no-repeat url('assets/numbers.png') 20vw .5vw / 184.444vw,no-repeat url('assets/numbers.png') -12.722vw .5vw / 184.444vw,no-repeat url('assets/numbers.png') -10.5vw .5vw / 184.444vw,no-repeat url('assets/points.png') 11.667vw .5vw / 1.667vw,no-repeat #6e8 url('assets/point.png') 7.889vw .5vw / 3.333vw";
+    scoreboard.draft+=(scoreboard.string[0]+'-12.772'+scoreboard.string[1]+scoreboard.string[0]+'-10.5'+scoreboard.string[1]); // [?][-][-][?][?]
   }
+  scoreboard.draft+=scoreboard.string[3]; // [?][?][?](pt)[?]
+  
+  scoreboard[scoringPlayer].style.background=scoreboard.draft;
 }
 
 function isSet(){
@@ -458,7 +478,7 @@ function start(){
     container.removeChild(container.lastChild);
   }
   //generates all 81 unique cards
-  for(var i = 0;i<81;i++){
+  for(i = 0;i<81;i++){
     card[i] = document.createElement('div');
     card[i][0] = i%3;
     card[i][1] = Math.floor(i%9/3);
@@ -482,14 +502,14 @@ function start(){
     container.appendChild(card[i]);
   }
   //selects 12
-  for(var i = 0;i<12;i++){
+  for(i = 0;i<12;i++){
     randomCard();
   }
 }
 
 function add(){
   if(tick<1){
-    for(var k = 0;k<3;k++){
+    for(k = 0;k<3;k++){
       randomCard(true);
     }
     tick=1;
