@@ -35,16 +35,16 @@ html,body{
 #rest{
   display:none;
 }
-#start-screen,#start-screen>*{
-  position:fixed;
+.blonk{
   animation:blonk 3.6s linear infinite;
   background-size:cover;
+  image-rendering:pixelated;
+  position:fixed;
   width:100%;
   height:100%;
-  image-rendering:pixelated;
 }
-#start-screen.pause,#start-screen>*.pause{
-  animation-duration:99999s;
+.blonk.pause{
+  animation:none;
 }
 #computer>*,#friends>*{
   animation:blink 3.6s linear infinite;
@@ -74,11 +74,16 @@ html,body{
 #computer{
   animation-delay:-2.4s;
   background-image:url(assets/computer.png);
+  background-color:#6e8;
 }
 #friends{
   top:5vmin;
   background-image:url(assets/friends.png);
   animation-delay:-1.2s;
+  background-color:#e66;
+}
+#start-screen,#about,#pause,#hue,#logo,#overview{
+  background-color:#68e;
 }
 #about{
   top:6vmin;
@@ -100,7 +105,6 @@ html,body{
   top:80.75vmin;
   left:calc(50vw - 45.5vmin);
   -webkit-appearance: none;
-  animation:blonk 3.6s linear infinite;
   cursor:pointer;
   box-shadow:inset 0 0 0 1vmin #000;
 }
@@ -117,22 +121,6 @@ html,body{
   background:#000;
   cursor:ew-resize;
 }
-#logo>*:first-child,#computer>*:first-child,#friends>*:first-child{
-  animation-delay:-3.6s;
-}
-#logo>*:nth-child(2),#computer>*:nth-child(2),#friends>*:nth-child(2){
-  animation-delay:-2.4s;
-}
-#logo>*:nth-child(3),#computer>*:nth-child(3),#friends>*:nth-child(3){
-  animation-delay:-1.2s;
-}
-@keyframes blink{
-  0%{opacity:1;}
-  33.332%{opacity:1;}
-  33.333%{opacity:0;}
-  99.999%{opacity:0;}
-  100%{opacity:1;}
-}
 @keyframes blonk{
   0%{background-color:#68e;}
   33.332%{background-color:#68e;}
@@ -140,6 +128,27 @@ html,body{
   66.666%{background-color:#e66;}
   66.667%{background-color:#6e8;}
   100%{background-color:#6e8;}
+}
+#overview{
+  position:fixed;
+  top:1vmin;
+  left:calc(50vw - 49vmin);
+  width:98vmin;
+  height:98vmin;
+  overflow:scroll;
+  border:solid #000 1vmin;
+  padding:2vmin;
+  box-sizing:border-box;
+  font-family:cliqfont;
+  font-size:11vmin;
+  display:none;
+}
+#overview.vis{
+  display:block;
+}
+@font-face {
+  font-family: "cliqfont";
+  src: url("assets/cliqfont.ttf");
 }
 .button{
   position:fixed;
@@ -283,13 +292,20 @@ html,body{
     </style>
   </head>
   <body>
-    <div id='start-screen'>
-      <div id='logo'></div>
-      <div class='button' id='computer' tabindex='1' onclick='switchplayer();switchplayer();' aria-label='Play against the computer'></div>
-      <div class='button' id='friends' tabindex='2' onclick='switchplayer();' aria-label='Play against your friends'></div>
-      <input id='hue' type='range' tabindex='3' min='-180' max='180' value='0' step='30' aria-label='Change colors'>
-      <div class='button' id='about' tabindex='4' onclick='about();' aria-label='What is this game?'></div>
-      <div class='button' id='pause' tabindex='5' onclick='pause();' aria-label='pause blinking'></div>
+    <div id='start-screen' class='blonk'>
+      <div class='blonk' id='logo'></div>
+      <div class='button blonk' id='computer' tabindex='1' onclick='switchplayer();switchplayer();' aria-label='Play against the computer'></div>
+      <div class='button blonk' id='friends' tabindex='2' onclick='switchplayer();' aria-label='Play against your friends'></div>
+      <input id='hue' class='blonk' type='range' tabindex='3' min='-180' max='180' value='0' step='30' aria-label='Change colors'>
+      <div class='button blonk' id='about' tabindex='4' onclick='about();' aria-label='What is this game?'></div>
+      <div class='button blonk' id='pause' tabindex='5' onclick='pause();' aria-label='pause blinking'></div>
+      <div id='overview'>
+Cliques is an open-source game of Set.
+<p>In this game, each card has four characteristics - color, transparency, parts, and shape - and each characteristic has 3 variations.
+<p>To play, select a trio of cards. You score a point if that trio of cards is a "set", and lose a point otherwise.
+<p>A trio is considered a "set" if, for each characteristic, all three cards have the same variation, or all three cards have different variations.
+<div class='button'>X</div>
+      </div>
     </div>
     <div id='rest'>
     <div class='button' id='logo-small' onclick='back();' title='back to menu'></div>
@@ -351,11 +367,15 @@ html,body{
 
 var startScreen=document.getElementById('start-screen'),
     player=document.getElementById('player'),
+    about=document.getElementById('about'),
+    overview=document.getElementById('overview'),
     
     rest=document.getElementById('rest'),
     addb=document.getElementById('add'),
     
     hue=document.getElementById('hue'),
+    pause=document.getElementById('pause'),
+    blonk=document.getElementsByClassName('blonk'),
     
     scoreOf=[0,0,0,0],
     theScore,
@@ -374,10 +394,42 @@ var startScreen=document.getElementById('start-screen'),
     i=0,
     j=0,
     k=0,
-    tick=0;
+    tick=0,
+    tock=0;
 
 player.is=0;
 scoreboard.string=['url(assets/numbers.png) ','vw .5vw / 184.444vw no-repeat,','url(assets/points.png) 11.778vw .5vw / 1.667vw no-repeat,','#6e8 url(assets/point.png) 7.889vw .5vw / 3.333vw no-repeat'];
+
+hue.addEventListener('input',function(){
+  if(Math.abs(hue.value)===180){
+    hue.value=0;
+  }
+  document.body.style.filter='hue-rotate('+hue.value+'deg)';
+})
+hue.addEventListener('change',function(){
+  hue.blur();
+})
+pause.addEventListener('click',function(){
+  if(tock<1){
+    for(i=0;i<blonk.length;i++){
+      blonk[i].classList.add('pause');
+    }
+    tock++;
+    pause.style.backgroundImage='url(assets/go.png)';
+  }else{
+    for(i=0;i<blonk.length;i++){
+      blonk[i].classList.remove('pause');
+    }
+    tock--;
+    pause.style.backgroundImage='url(assets/pause.png)';
+  }
+  pause.blur();
+})
+
+
+function about(){
+  alert('o');
+}
 
 function removeBlock(){
   rest.style.display='block';
@@ -501,7 +553,21 @@ function randomCard(last){
       card[rand].style.order+=99;
     }
     card[rand].setAttribute('tabindex',card[rand].style.order+100);
-    card[rand].addEventListener('click',function(){
+    card[rand].addEventListener('mousedown',function(){
+      card[rand].blur();
+      if(!(card[rand].classList.contains('selected'))){
+        card[rand].classList.add('selected');
+        count[0][card[rand][0]]++;
+        count[1][card[rand][1]]++;
+        count[2][card[rand][2]]++;
+        count[3][card[rand][3]]++;
+        selected = document.getElementsByClassName('selected');
+        if(selected.length>2){
+          isSet();
+        }
+      }
+    });
+    card[rand].addEventListener('touchstart',function(){
       card[rand].blur();
       if(!(card[rand].classList.contains('selected'))){
         card[rand].classList.add('selected');
@@ -574,16 +640,6 @@ function add(){
   addb.classList.add('disabled');
   container.classList='stretch';
 }
-
-hue.addEventListener('input',function(){
-  if(Math.abs(hue.value)===180){
-    hue.value=0;
-  }
-  document.body.style.filter='hue-rotate('+hue.value+'deg)';
-})
-hue.addEventListener('change',function(){
-  hue.blur();
-})
     </script>
   </body>
 </html>
