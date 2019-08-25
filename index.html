@@ -43,34 +43,8 @@ html,body{
   height:100%;
   image-rendering:pixelated;
 }
-#hue-wrapper{
-  top:77.75vmin;
-  left:calc(50vw - 38vmin);
-}
-#hue{
-  width:17.875vmin;
-  height:3vmin;
-  transform-origin:bottom left;
-  transform:rotate(90deg);
-  -webkit-appearance: none;
-  animation:blonk 3.6s linear infinite;
-  cursor:pointer;
-}
-#hue:focus{
-  outline:none;
-}
-#hue::-webkit-slider-runnable-track {
-  -webkit-appearance: none;
-  height:3vmin;
-  box-shadow:inset 0 0 0 1vmin #000;
-}
-#hue::-webkit-slider-thumb{
-  -webkit-appearance: none;
-  width:1.5vmin;
-  height:1.5vmin;
-  margin:.75vmin 0 0 .75vmin;
-  background:#000;
-  cursor:ns-resize;
+#start-screen.pause,#start-screen>*.pause{
+  animation-duration:99999s;
 }
 #computer>*,#friends>*{
   animation:blink 3.6s linear infinite;
@@ -88,7 +62,7 @@ html,body{
   background-image:url(assets/logo.png);
   box-shadow: inset 0 0 0 1.95vmin #000;
 }
-#computer,#friends,#about{
+#computer,#friends,#about,#pause{
   height:18vmin;
   top:4vmin;
   box-shadow:inset 0 0 0 1vmin #000;
@@ -112,6 +86,36 @@ html,body{
   width:67vmin;
   left:calc(50vw - 33.5vmin);
   animation-delay:0s;
+}
+#pause{
+  position:fixed;
+  top:81vmin;
+  right:calc(50vw - 45.5vmin);
+  width:11vmin;
+  background-image:url(assets/pause.png);
+}
+#hue{
+  width:11vmin;
+  height:18vmin;
+  top:80.75vmin;
+  left:calc(50vw - 45.5vmin);
+  -webkit-appearance: none;
+  animation:blonk 3.6s linear infinite;
+  cursor:pointer;
+  box-shadow:inset 0 0 0 1vmin #000;
+}
+#hue:focus{
+  outline:none;
+}
+#hue::-webkit-slider-runnable-track {
+  -webkit-appearance: none;
+}
+#hue::-webkit-slider-thumb{
+  -webkit-appearance: none;
+  width:1vmin;
+  height:14.5vmin;
+  background:#000;
+  cursor:ew-resize;
 }
 #logo>*:first-child,#computer>*:first-child,#friends>*:first-child{
   animation-delay:-3.6s;
@@ -280,16 +284,12 @@ html,body{
   </head>
   <body>
     <div id='start-screen'>
-      <div id='hue-wrapper'>
-        <input id='hue' type='range' min='0' max='360' value='0' title='Change colors'>
-      </div>
       <div id='logo'></div>
-      <div class='button' id='computer' tabindex='1' onclick='switchplayer();switchplayer();' title='Play against the computer'>
-      </div>
-      <div class='button' id='friends' tabindex='2' onclick='switchplayer();' title='Play against your friends'>
-      </div>
-      <div class='button' id='about' tabindex='3' onclick='about();' title='What is this game?'>
-      </div>
+      <div class='button' id='computer' tabindex='1' onclick='switchplayer();switchplayer();' aria-label='Play against the computer'></div>
+      <div class='button' id='friends' tabindex='2' onclick='switchplayer();' aria-label='Play against your friends'></div>
+      <input id='hue' type='range' tabindex='3' min='-180' max='180' value='0' step='30' aria-label='Change colors'>
+      <div class='button' id='about' tabindex='4' onclick='about();' aria-label='What is this game?'></div>
+      <div class='button' id='pause' tabindex='5' onclick='pause();' aria-label='pause blinking'></div>
     </div>
     <div id='rest'>
     <div class='button' id='logo-small' onclick='back();' title='back to menu'></div>
@@ -575,11 +575,14 @@ function add(){
   container.classList='stretch';
 }
 
-hue.addEventListener('change',function(e){
-  if(hue.value>330){
+hue.addEventListener('input',function(){
+  if(Math.abs(hue.value)===180){
     hue.value=0;
   }
   document.body.style.filter='hue-rotate('+hue.value+'deg)';
+})
+hue.addEventListener('change',function(){
+  hue.blur();
 })
     </script>
   </body>
