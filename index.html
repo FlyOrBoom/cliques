@@ -2,23 +2,26 @@
 <html>
   <head>
     <title>Cliques!</title>
-    <link rel="icon" type="image/png"  href="assets/favicon.png">
-    <link rel="preload" href="assets/computer-r.png" as="image">
-    <link rel="preload" href="assets/computer-g.png" as="image">
-    <link rel="preload" href="assets/computer-b.png" as="image">
-    <link rel="preload" href="assets/friends-r.png" as="image">
-    <link rel="preload" href="assets/friends-g.png" as="image">
-    <link rel="preload" href="assets/friends-b.png" as="image">
-    <link rel="preload" href="assets/logo-r.png" as="image">
-    <link rel="preload" href="assets/logo-g.png" as="image">
-    <link rel="preload" href="assets/logo-b.png" as="image">
-    <link rel="preload" href="assets/numbers.png" as="image">
-    <link rel="preload" href="assets/plus.png" as="image">
-    <link rel="preload" href="assets/point.png" as="image">
-    <link rel="preload" href="assets/points.png" as="image">
-    <link rel="preload" href="assets/restart.png" as="image">
-    <link rel="preload" href="assets/vs-computer.png" as="image">
-    <link rel="preload" href="assets/vs-human.png" as="image">
+    <link rel='icon' type='image/png'  href='assets/favicon.png'>
+    <link rel='preload' href='assets/logo-r.png' as='image'>
+    <link rel='preload' href='assets/logo-g.png' as='image'>
+    <link rel='preload' href='assets/logo-b.png' as='image'>
+    <link rel='preload' href='assets/computer-r.png' as='image'>
+    <link rel='preload' href='assets/computer-g.png' as='image'>
+    <link rel='preload' href='assets/computer-b.png' as='image'>
+    <link rel='preload' href='assets/friends-r.png' as='image'>
+    <link rel='preload' href='assets/friends-g.png' as='image'>
+    <link rel='preload' href='assets/friends-b.png' as='image'>
+    <!--<link rel='preload' href='assets/what-r.png' as='image'>-->
+    <!--<link rel='preload' href='assets/what-g.png' as='image'>-->
+    <link rel='preload' href='assets/what-b.png' as='image'>
+    <link rel='preload' href='assets/numbers.png' as='image'>
+    <link rel='preload' href='assets/plus.png' as='image'>
+    <link rel='preload' href='assets/point.png' as='image'>
+    <link rel='preload' href='assets/points.png' as='image'>
+    <link rel='preload' href='assets/restart.png' as='image'>
+    <link rel='preload' href='assets/vs-computer.png' as='image'>
+    <link rel='preload' href='assets/vs-human.png' as='image'>
     <style>
 /**{transition-duration:0.01s;}*/
 html,body{
@@ -26,56 +29,89 @@ html,body{
   height:100%;
   overflow:hidden;
   margin:0;
-}
-body{
+  image-rendering:pixelated;
   background:#222;
 }
 #rest{
   display:none;
 }
-#start-screen{
+#start-screen,#start-screen>*{
   position:fixed;
-  top:0;
-  width:100%;
-  height:100%;
-  background:#68e;
   animation:blonk 3.6s linear infinite;
-}
-#logo>*,#logo-small>*,#computer>*,#friends>*{
-  position:absolute;
+  background-size:cover;
   width:100%;
   height:100%;
   image-rendering:pixelated;
+}
+#hue-wrapper{
+  top:77.75vmin;
+  left:calc(50vw - 38vmin);
+}
+#hue{
+  width:17.875vmin;
+  height:3vmin;
+  transform-origin:bottom left;
+  transform:rotate(90deg);
+  -webkit-appearance: none;
+  animation:blonk 3.6s linear infinite;
   cursor:pointer;
 }
-#logo>*,#computer>*,#friends>*{
+#hue:focus{
+  outline:none;
+}
+#hue::-webkit-slider-runnable-track {
+  -webkit-appearance: none;
+  height:3vmin;
+  box-shadow:inset 0 0 0 1vmin #000;
+}
+#hue::-webkit-slider-thumb{
+  -webkit-appearance: none;
+  width:1.5vmin;
+  height:1.5vmin;
+  margin:.75vmin 0 0 .75vmin;
+  background:#000;
+  cursor:ns-resize;
+}
+#computer>*,#friends>*{
   animation:blink 3.6s linear infinite;
 }
-#logo,#logo-small,#computer,#friends{
+#logo,#logo-small,#computer,#friends,#about{
   position:relative;
 }
 #logo{
-  top:3vw;
-  width:30vw;
-  height:20vw;
-  left:35vw;
+  top:1.95vmin;
+  width:58.5vmin;
+  height:39vmin;
+  left:calc(50vw - 29.25vmin);
   pointer-events:none;
+  animation-delay:0s;
+  background-image:url(assets/logo.png);
+  box-shadow: inset 0 0 0 1.95vmin #000;
 }
-#logo-small{
-  position:fixed;
-  top:1vw;
-  left:1vw;
-  width:15vw;
-  height:10vw;
+#computer,#friends,#about{
+  height:18vmin;
+  top:4vmin;
+  box-shadow:inset 0 0 0 1vmin #000;
 }
 #computer,#friends{
-  width:40.5vw;
-  height:9vw;
-  left:29.75vw;
-  top:4vw;
+  width:91vmin;
+  left:calc(50vw - 45.5vmin);
+}
+#computer{
+  animation-delay:-2.4s;
+  background-image:url(assets/computer.png);
 }
 #friends{
-  top:5vw;
+  top:5vmin;
+  background-image:url(assets/friends.png);
+  animation-delay:-1.2s;
+}
+#about{
+  top:6vmin;
+  background-image:url(assets/what.png);
+  width:67vmin;
+  left:calc(50vw - 33.5vmin);
+  animation-delay:0s;
 }
 #logo>*:first-child,#computer>*:first-child,#friends>*:first-child{
   animation-delay:-3.6s;
@@ -94,28 +130,35 @@ body{
   100%{opacity:1;}
 }
 @keyframes blonk{
-  0%{background:#68e;}
-  33.332%{background:#68e;}
-  33.333%{background:#e66;}
-  66.666%{background:#e66;}
-  66.667%{background:#6e8;}
-  100%{background:#6e8;}
+  0%{background-color:#68e;}
+  33.332%{background-color:#68e;}
+  33.333%{background-color:#e66;}
+  66.666%{background-color:#e66;}
+  66.667%{background-color:#6e8;}
+  100%{background-color:#6e8;}
 }
 .button{
   position:fixed;
   border:none;
   cursor:pointer;
   background-size:cover;
-  image-rendering:pixelated;
   background-repeat:no-repeat;
 
+}
+#logo-small{
+  position:fixed;
+  top:1vw;
+  left:1vw;
+  width:15vw;
+  height:10vw;
+  background-image:url(assets/logo-b.png);
 }
 #restart{
   left:1vw;
   top:11.5vw;
   width:5vw;
   height:10vw;
-  background-image:url('assets/restart.png');
+  background-image:url(assets/restart.png);
 }
 #player{
   top:11.5vw;
@@ -126,7 +169,7 @@ body{
 #score0{
   left:1vw;
   width:14vw;
-  height:32.15vw;
+  height:calc(100vh - 24vw);
   top:22vw;
   border:.5vw solid #000;
 }
@@ -135,7 +178,7 @@ body{
   height:calc(100vh - 3vw);
   top:1vw;
   right:1vw;
-  background-image:url('assets/plus.png');
+  background-image:url(assets/plus.png);
   background-size:5vw;
   background-position:center;
   border:.5vw solid #000;
@@ -192,10 +235,10 @@ body{
   filter:brightness(.6);
   cursor:not-allowed;
 }
-#card-container>*:hover:not(.selected),.button:hover,#computer:hover,#friends:hover{
+#card-container>*:hover:not(.selected),.button:hover,#computer:hover,#friends:hover,#hue:hover{
   filter:brightness(.8);
 }
-#card-container>*:focus,.button:focus,#computer:focus,#friends:focus{
+#card-container>*:focus,.button:focus,#computer:focus,#friends:focus,#hue:focus{
   outline:none;
   filter:brightness(.5);
 }
@@ -237,26 +280,19 @@ body{
   </head>
   <body>
     <div id='start-screen'>
-      <div id='logo'>
-        <img src='assets/logo-b.png'/>
-        <img src='assets/logo-r.png'/>
-        <img src='assets/logo-g.png'/>
+      <div id='hue-wrapper'>
+        <input id='hue' type='range' min='0' max='360' value='0' title='Change colors'>
       </div>
-      <div id='computer' tabindex='1' onclick='singleplayer();' title='Play against the computer'>
-        <img src='assets/computer-g.png'/>
-        <img src='assets/computer-b.png'/>
-        <img src='assets/computer-r.png'/>
+      <div id='logo'></div>
+      <div class='button' id='computer' tabindex='1' onclick='switchplayer();switchplayer();' title='Play against the computer'>
       </div>
-      <div id='friends' tabindex='2' onclick='multiplayer();' title='Play against your friends'>
-        <img src='assets/friends-r.png'/>
-        <img src='assets/friends-g.png'/>
-        <img src='assets/friends-b.png'/>
+      <div class='button' id='friends' tabindex='2' onclick='switchplayer();' title='Play against your friends'>
+      </div>
+      <div class='button' id='about' tabindex='3' onclick='about();' title='What is this game?'>
       </div>
     </div>
     <div id='rest'>
-    <div class='button' id='logo-small' onclick='back();' title='back to menu'>
-      <img src='assets/logo-b.png'>
-    </div>
+    <div class='button' id='logo-small' onclick='back();' title='back to menu'></div>
     <div class='button' id='restart' onclick='start();' title='start a new game'></div>
     <div class='button' id='player' onclick='switchplayer();'></div>
     <div class='button' id='score0'></div>
@@ -319,6 +355,8 @@ var startScreen=document.getElementById('start-screen'),
     rest=document.getElementById('rest'),
     addb=document.getElementById('add'),
     
+    hue=document.getElementById('hue'),
+    
     scoreOf=[0,0,0,0],
     theScore,
     scoreboard=[document.getElementById('score0'),document.getElementById('score1'),document.getElementById('score2'),document.getElementById('score3')],
@@ -339,7 +377,7 @@ var startScreen=document.getElementById('start-screen'),
     tick=0;
 
 player.is=0;
-scoreboard.string=["url('assets/numbers.png') ","vw .5vw / 184.444vw no-repeat,","url('assets/points.png') 11.778vw .5vw / 1.667vw no-repeat,","#6e8 url('assets/point.png') 7.889vw .5vw / 3.333vw no-repeat"];
+scoreboard.string=['url(assets/numbers.png) ','vw .5vw / 184.444vw no-repeat,','url(assets/points.png) 11.778vw .5vw / 1.667vw no-repeat,','#6e8 url(assets/point.png) 7.889vw .5vw / 3.333vw no-repeat'];
 
 function removeBlock(){
   rest.style.display='block';
@@ -355,26 +393,24 @@ function switchplayer(){
   if(player.is === 0){
     player.style.backgroundImage='url(assets/vs-human.png)';
     player.title='playing against humans';
+    multiplayer();
     player.is++;
   }else{
     player.style.backgroundImage='url(assets/vs-computer.png)';
     player.title='playing against computer';
+    singleplayer();
     player.is--;
   }
 }
 
 function singleplayer(){
-  player.style.backgroundImage='url(assets/vs-computer.png)';
   start();
   removeBlock();
-  switchplayer();
-  switchplayer();
 }
 
 function multiplayer(){
-  player.style.backgroundImage='url(assets/vs-human.png)';
+  start();
   removeBlock();
-  switchplayer();
 }
 
 const allEqual = arr => arr.every( v => v === arr[0] ); //if all of an array are equal
@@ -493,6 +529,11 @@ function start(){
   while(container.hasChildNodes()) {
     container.removeChild(container.lastChild);
   }
+  
+  addb.classList.remove('disabled');
+  tick = 0;
+  container.classList='';
+  
   //generates all 81 unique cards
   for(i = 0;i<81;i++){
     card[i] = document.createElement('div');
@@ -534,6 +575,12 @@ function add(){
   container.classList='stretch';
 }
 
+hue.addEventListener('change',function(e){
+  if(hue.value>330){
+    hue.value=0;
+  }
+  document.body.style.filter='hue-rotate('+hue.value+'deg)';
+})
     </script>
   </body>
 </html>
