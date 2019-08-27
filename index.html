@@ -3,18 +3,10 @@
   <head>
     <title>Cliques!</title>
     <link rel='icon' type='image/png'  href='assets/favicon.png'>
-    <link rel='preload' href='assets/logo-r.png' as='image'>
-    <link rel='preload' href='assets/logo-g.png' as='image'>
-    <link rel='preload' href='assets/logo-b.png' as='image'>
-    <link rel='preload' href='assets/computer-r.png' as='image'>
-    <link rel='preload' href='assets/computer-g.png' as='image'>
-    <link rel='preload' href='assets/computer-b.png' as='image'>
-    <link rel='preload' href='assets/friends-r.png' as='image'>
-    <link rel='preload' href='assets/friends-g.png' as='image'>
-    <link rel='preload' href='assets/friends-b.png' as='image'>
-    <!--<link rel='preload' href='assets/what-r.png' as='image'>-->
-    <!--<link rel='preload' href='assets/what-g.png' as='image'>-->
-    <link rel='preload' href='assets/what-b.png' as='image'>
+    <link rel='preload' href='assets/logo.png' as='image'>
+    <link rel='preload' href='assets/computer.png' as='image'>
+    <link rel='preload' href='assets/friends.png' as='image'>
+    <link rel='preload' href='assets/what.png' as='image'>
     <link rel='preload' href='assets/numbers.png' as='image'>
     <link rel='preload' href='assets/plus.png' as='image'>
     <link rel='preload' href='assets/point.png' as='image'>
@@ -57,15 +49,13 @@ html,body{
   width:58.5vmin;
   height:39vmin;
   left:calc(50vw - 29.25vmin);
-  pointer-events:none;
   animation-delay:0s;
   background-image:url(assets/logo.png);
-  box-shadow: inset 0 0 0 1.95vmin #000;
+  border:solid #000 2vmin;
 }
 #computer,#friends,#about,#pause{
   height:18vmin;
   top:4vmin;
-  box-shadow:inset 0 0 0 1vmin #000;
 }
 #computer,#friends{
   width:91vmin;
@@ -74,16 +64,11 @@ html,body{
 #computer{
   animation-delay:-2.4s;
   background-image:url(assets/computer.png);
-  background-color:#6e8;
 }
 #friends{
   top:5vmin;
   background-image:url(assets/friends.png);
   animation-delay:-1.2s;
-  background-color:#e66;
-}
-#start-screen,#about,#pause,#hue,#logo,#overview{
-  background-color:#68e;
 }
 #about{
   top:6vmin;
@@ -101,12 +86,11 @@ html,body{
 }
 #hue{
   width:11vmin;
-  height:18vmin;
+  height:17.9vmin;
   top:80.75vmin;
   left:calc(50vw - 45.5vmin);
   -webkit-appearance: none;
   cursor:pointer;
-  box-shadow:inset 0 0 0 1vmin #000;
 }
 #hue:focus{
   outline:none;
@@ -156,7 +140,8 @@ html,body{
   cursor:pointer;
   background-size:cover;
   background-repeat:no-repeat;
-
+  border:solid #000 1vmin;
+  box-sizing:border-box;
 }
 #logo-small{
   position:fixed;
@@ -164,7 +149,7 @@ html,body{
   left:1vw;
   width:15vw;
   height:10vw;
-  background-image:url(assets/logo-b.png);
+  background-image:url(assets/logo.png);
 }
 #restart{
   left:1vw;
@@ -179,22 +164,26 @@ html,body{
   width:9.444vw;
   height:10vw;
 }
-#score0{
+.score{
   left:1vw;
-  width:14vw;
-  height:calc(100vh - 24vw);
+  width:15vw;
+}
+#score0{
+  height:calc(50vh - 11.75vw);
   top:22vw;
-  border:.5vw solid #000;
+}
+#score1{
+  height:calc(50vh - 11.75vw);
+  bottom:1vw;
 }
 #add{
-  width:14.75vw;
-  height:calc(100vh - 3vw);
+  width:15.75vw;
+  height:calc(100vh - 2vw);
   top:1vw;
   right:1vw;
   background-image:url(assets/plus.png);
   background-size:5vw;
   background-position:center;
-  border:.5vw solid #000;
   opacity:.4;
   display:block;
 }
@@ -228,11 +217,11 @@ html,body{
   text-align:center;
   cursor:pointer;
   border:.5vw solid #000;
-
   width:15vw;
   flex-basis:calc(100vh/3 - 2vw);
   max-height:calc(100vh/3 - 2vw);
   margin:.25vw;
+  display:none;
 }
 #card-container>*.right{
   border:.5vw solid #6e8;
@@ -248,10 +237,10 @@ html,body{
   filter:brightness(.6);
   cursor:not-allowed;
 }
-#card-container>*:hover:not(.selected),.button:hover,#computer:hover,#friends:hover,#hue:hover{
+#card-container>*:hover:not(.selected),.button:hover{
   filter:brightness(.8);
 }
-#card-container>*:focus,.button:focus,#computer:focus,#friends:focus,#hue:focus{
+#card-container>*:focus,.button:focus{
   outline:none;
   filter:brightness(.5);
 }
@@ -272,13 +261,13 @@ html,body{
   stroke:#000;
 }
 .color0{
-  background:#e66;
+  background-color:#e66;
 }
 .color1{
-  background:#6e8;
+  background-color:#6e8;
 }
 .color2{
-  background:#68e;
+  background-color:#68e;
 }
 .opacity0{
   fill-opacity:0;
@@ -289,17 +278,20 @@ html,body{
 .opacity2{
   fill-opacity:1;
 }
+#card-container>*.visible{
+  display:block;
+}
     </style>
   </head>
-  <body>
-    <div id='start-screen' class='blonk'>
-      <div class='blonk' id='logo'></div>
-      <div class='button blonk' id='computer' tabindex='1' onclick='switchplayer();switchplayer();' aria-label='Play against the computer'></div>
-      <div class='button blonk' id='friends' tabindex='2' onclick='switchplayer();' aria-label='Play against your friends'></div>
-      <input id='hue' class='blonk' type='range' tabindex='3' min='-180' max='180' value='0' step='30' aria-label='Change colors'>
-      <div class='button blonk' id='about' tabindex='4' onclick='about();' aria-label='What is this game?'></div>
-      <div class='button blonk' id='pause' tabindex='5' onclick='pause();' aria-label='pause blinking'></div>
-      <div id='overview'>
+ <body>
+    <div id='start-screen' class='blonk color2'>
+      <div class='button color2 blonk' id='logo' onclick='alert("made with <3 by crossing\npqrstuvwxyz")'></div>
+      <div class='button color1 blonk' id='computer' tabindex='1' onclick='switchplayer();switchplayer();' aria-label='Play against the computer'></div>
+      <div class='button color0 blonk' id='friends' tabindex='2' onclick='switchplayer();' aria-label='Play against your friends'></div>
+      <input class='button color2 blonk' id='hue' type='range' tabindex='3' min='-180' max='180' value='0' step='30' aria-label='Change colors'>
+      <div class='button color2 blonk' id='about' tabindex='4' onclick='showOverview();' aria-label='What is this game?'></div>
+      <div class='button color2 blonk' id='pause' tabindex='5' onclick='pause();' aria-label='pause blinking'></div>
+      <div class='color2' id='overview'>
 Cliques is an open-source game of Set.
 <p>In this game, each card has four characteristics - color, transparency, parts, and shape - and each characteristic has 3 variations.
 <p>To play, select a trio of cards. You score a point if that trio of cards is a "set", and lose a point otherwise.
@@ -308,13 +300,13 @@ Cliques is an open-source game of Set.
       </div>
     </div>
     <div id='rest'>
-    <div class='button' id='logo-small' onclick='back();' title='back to menu'></div>
-    <div class='button' id='restart' onclick='start();' title='start a new game'></div>
+    <div class='button color2' id='logo-small' onclick='back();' title='back to menu'></div>
+    <div class='button color0' id='restart' onclick='start();' title='start a new game'></div>
     <div class='button' id='player' onclick='switchplayer();'></div>
-    <div class='button' id='score0'></div>
-    <div class='button' id='score1'></div>
-    <div class='button' id='score2'></div>
-    <div class='button' id='score3'></div>
+    <div class='button color1 score' id='score0'></div>
+    <div class='button color2 score' id='score1'></div>
+    <!--<div class='button color0 score' id='score2'></div>-->
+    <!--<div class='button color1 score' id='score3'></div>-->
     <div class='button' id='add' onclick='add();' title='add 3 cards'></div>
     <div id='card-container'></div>
     <svg>
@@ -361,13 +353,12 @@ Cliques is an open-source game of Set.
     <script>
 
 //0:color
-//1:opacity
+//1:shade
 //2:parts
 //3:shape
 
 var startScreen=document.getElementById('start-screen'),
     player=document.getElementById('player'),
-    about=document.getElementById('about'),
     overview=document.getElementById('overview'),
     
     rest=document.getElementById('rest'),
@@ -379,15 +370,23 @@ var startScreen=document.getElementById('start-screen'),
     
     scoreOf=[0,0,0,0],
     theScore,
+    theScoreAbs,
     scoreboard=[document.getElementById('score0'),document.getElementById('score1'),document.getElementById('score2'),document.getElementById('score3')],
 
     container=document.getElementById('card-container'),
     card=[],
     svg=[],
     use=[],
-    color=['#e66','#6e8','#68e'],
     
+    color=['red','green','blue'],
+    shade=['colorful','dim','black'],
+    parts=['one','two','three'],
+    shape=['pill','squiggle','diamond'],
+    
+    visible=[],
     selected=[],
+    setFiller=[],
+    setsFound=[],
     
     count=[[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
     
@@ -405,10 +404,10 @@ hue.addEventListener('input',function(){
     hue.value=0;
   }
   document.body.style.filter='hue-rotate('+hue.value+'deg)';
-})
+});
 hue.addEventListener('change',function(){
   hue.blur();
-})
+});
 pause.addEventListener('click',function(){
   if(tock<1){
     for(i=0;i<blonk.length;i++){
@@ -424,11 +423,11 @@ pause.addEventListener('click',function(){
     pause.style.backgroundImage='url(assets/pause.png)';
   }
   pause.blur();
-})
+});
 
 
-function about(){
-  alert('o');
+function showOverview(){
+  overview.style.display='block';
 }
 
 function removeBlock(){
@@ -442,12 +441,16 @@ function back(){
 }
 
 function switchplayer(){
-  if(player.is === 0){
+  if(player.is===0){
+    player.classList.add('color1');
+    player.classList.remove('color2');
     player.style.backgroundImage='url(assets/vs-human.png)';
     player.title='playing against humans';
     multiplayer();
     player.is++;
   }else{
+    player.classList.add('color2');
+    player.classList.remove('color1');
     player.style.backgroundImage='url(assets/vs-computer.png)';
     player.title='playing against computer';
     singleplayer();
@@ -465,7 +468,7 @@ function multiplayer(){
   removeBlock();
 }
 
-const allEqual = arr => arr.every( v => v === arr[0] ); //if all of an array are equal
+const allEqual=arr=> arr.every( v=> v===arr[0] ); //if all of an array are equal
 
 function score(scoringPlayer,amountScored){
   
@@ -473,8 +476,8 @@ function score(scoringPlayer,amountScored){
   
   scoreboard.draft='';
   
-  theScore = scoreOf[scoringPlayer];
-  theScoreAbs = Math.abs(theScore);
+  theScore=scoreOf[scoringPlayer];
+  theScoreAbs=Math.abs(theScore);
   
   if(Math.abs(theScore-450)<550){ //if within limits
     scoreboard.draft+=(scoreboard.string[0]+String((theScoreAbs%10)*(-16.667)-27)+scoreboard.string[1]); // [?][?][|x%10|]
@@ -507,13 +510,13 @@ function isSet(){
     
     console.log('set!');
     score(0,1);
-    for(j = 0;j<card.length;j++){
+    for(j=0;j<card.length;j++){
       card[j].classList.add('right');
     }
     
     setTimeout(function(){
       
-      for(j = 0;j<card.length;j++){
+      for(j=0;j<card.length;j++){
         card[j].classList.remove('right');
       }
       for(j=0;j<3;j++){
@@ -531,7 +534,7 @@ function isSet(){
   }else{
 
     score(0,-1);
-    for(j = 0;j<card.length;j++){
+    for(j=0;j<card.length;j++){
       card[j].classList.add('wrong');
     }
     
@@ -545,9 +548,11 @@ function isSet(){
 }
 
 function randomCard(last){
-  var rand = Math.floor(card.length*Math.random());
-  if(card[rand].style.display=='none'){
-    card[rand].style.display='block';
+  var rand=Math.floor(card.length*Math.random());
+  if(card[rand].classList.contains('visible')){
+    randomCard(last);
+  }else{
+    card[rand].classList.add('visible');
     card[rand].style.order=Math.floor(99*Math.random());
     if(last==true){
       card[rand].style.order+=99;
@@ -561,7 +566,7 @@ function randomCard(last){
         count[1][card[rand][1]]++;
         count[2][card[rand][2]]++;
         count[3][card[rand][3]]++;
-        selected = document.getElementsByClassName('selected');
+        selected=document.getElementsByClassName('selected');
         if(selected.length>2){
           isSet();
         }
@@ -575,20 +580,18 @@ function randomCard(last){
         count[1][card[rand][1]]++;
         count[2][card[rand][2]]++;
         count[3][card[rand][3]]++;
-        selected = document.getElementsByClassName('selected');
+        selected=document.getElementsByClassName('selected');
         if(selected.length>2){
           isSet();
         }
       }
     });
-  }else{
-    randomCard(last);
   }
 }
 
 function start(){
   
-  scoreOf=[0,0,0,0]
+  scoreOf=[0,0,0,0];
   score(0,0);
   
   //for restarts
@@ -597,48 +600,72 @@ function start(){
   }
   
   addb.classList.remove('disabled');
-  tick = 0;
+  tick=0;
   container.classList='';
   
   //generates all 81 unique cards
-  for(i = 0;i<81;i++){
-    card[i] = document.createElement('div');
-    card[i][0] = i%3;
-    card[i][1] = Math.floor(i%9/3);
-    card[i][2] = Math.floor(i%27/9);
-    card[i][3] = Math.floor(i%81/27);
+  for(i=0;i<81;i++){
+    card[i]=document.createElement('div');
+    card[i][0]=i%3;
+    card[i][1]=Math.floor(i%9/3);
+    card[i][2]=Math.floor(i%27/9);
+    card[i][3]=Math.floor(i%81/27);
     card[i].classList='color'+card[i][0]+' opacity'+card[i][1];
-    card[i].title = card[i][0]+'-'+card[i][1]+'-'+card[i][2]+'-'+card[i][3];
+    card[i].title=parts[card[i][2]]+' '+shade[card[i][1]]+' '+color[card[i][0]]+' '+shape[card[i][3]];
+    if(card[i][2]>0){
+      card[i].title+='s';
+    }
     
-    svg[i] = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg[i]=document.createElementNS('http://www.w3.org/2000/svg','svg');
     svg[i].setAttribute('viewBox','0 0 140 160');
     svg[i].classList='svg';
     
-    use[i] = document.createElementNS('http://www.w3.org/2000/svg','use');
+    use[i]=document.createElementNS('http://www.w3.org/2000/svg','use');
     use[i].setAttribute('href','#s'+card[i][2]+card[i][3]);
     
     svg[i].appendChild(use[i]);
     card[i].appendChild(svg[i]);
     
-    card[i].style.display='none';
-  
     container.appendChild(card[i]);
   }
   //selects 12
-  for(i = 0;i<12;i++){
+  for(i=0;i<12;i++){
     randomCard();
   }
 }
 
 function add(){
   if(tick<1){
-    for(k = 0;k<3;k++){
+    for(k=0;k<3;k++){
       randomCard(true);
     }
     tick=1;
   }
   addb.classList.add('disabled');
   container.classList='stretch';
+}
+
+function findSet(){
+  visible=document.getElementsByClassName('visible');
+  //selects two visible cards
+  for(i=0;i<visible.length;i++){ //picks 1 card
+    for(j=0;j<visible.length;j++){ //picks another card
+      if(j!==i){ //if the cards are different
+        for(k=0;k<4;k++){
+          if(visible[i][k]===visible[j][k]){ //if kth characteristic on both are the same
+            setFiller[k]=visible[j][k]; //kth characteristic on the third follows
+          }else{
+            setFiller[k]=(Math.abs(visible[i][k]-visible[j][k])-1); //kth characteristic on the third is different
+          }
+        }
+        setsFound.push([setFiller[0],setFiller[1],setFiller[2],setFiller[3]]); //weird method but works
+        console.log(setFiller);
+        // console.log('0+'+setsFound[0]);
+      }
+    }
+  }
+  setsFound=Array.from(new Set(setsFound));
+  return setsFound;
 }
     </script>
   </body>
