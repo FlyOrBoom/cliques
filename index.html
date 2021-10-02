@@ -66,6 +66,16 @@ aside label {
 .f3_1 {  }
 .f3_2 {  }
 
+/* rotations */
+.f4_0 { transform: rotate(0deg) }
+.f4_1 { transform: rotate(45deg) }
+.f4_2 { transform: rotate(-45deg) }
+
+/* something */
+.f5_0 {  }
+.f5_1 {  }
+.f5_2 {  }
+
     </style>
 	</head>
 	<body>
@@ -76,24 +86,27 @@ aside label {
 				<ol id=players>
 					<li>You</li>
 				</ol>
-				Invite others: <input type=text readonly value=https://x-ing.space/cliques#pqrstuvwxyz>
+        <label>
+          <span>Invite others online:</span>
+         <input type=text readonly value=https://x-ing.space/cliques#pqrstuvwxyz disabled>
+        </label>
 			</section>
 			<form id=settings>
 				<h2>Settings</h2>
 				<label id=time>
 					<span>Time limit (seconds) (0 is infinite)</span>
-					<input type=number min=0 max=100 value=10>
-					<input type=range min=0 max=100 value=10>
+					<input type=number min=0 max=300 value=10 disabled>
+					<input type=range min=0 max=300 value=10 disabled>
 				</label>
 				<label id=features>
 					<span>Difficulty (number of features per card)</span>
-					<input type=number min=3 max=5 value=4>
-					<input type=range min=3 max=5 value=4>
+					<input type=number min=3 max=6 value=4>
+					<input type=range min=3 max=6 value=4>
 				</label>
 				<label id=features>
-					<span>Threshold for extra cards (% voted)</span>
-					<input type=number min=0 max=100 value=100>
-					<input type=range min=0 max=100 value=100>
+					<span>Threshold for extra cards (% voted in favor)</span>
+					<input type=number min=0 max=100 value=100 disabled>
+					<input type=range min=0 max=100 value=100 disabled>
 				</label>
 				<input type=submit value='New game'>
 			</form>
@@ -101,30 +114,40 @@ aside label {
 				<h2>Preferences</h2>
 				<label id=palette>
 					<span>Color palette</span>
-					<input type=number min=0 max=3 value=0>
-					<input type=range min=0 max=3 value=0>
+					<input type=number min=0 max=3 value=0 disabled>
+					<input type=range min=0 max=3 value=0 disabled>
 				</label>
 				<label id=look>
 					<span>Look</span>
-					<input type=number min=0 max=3 value=0>
-					<input type=range min=0 max=3 value=0>
+					<input type=number min=0 max=3 value=0 disabled>
+					<input type=range min=0 max=3 value=0 disabled>
 				</label>
 			</form>
 			<section>
 				<h2>How to play</h2>
-				<p>Cliques is an open-source variant of Set.</p>
-				<p>In this game, each card has four features - number, shading, color, and shape - and each characteristic has 3 variations.</p>
+				<p>Cliques is Xing’s open-source adaptation of the mathematical card game Set by Marsha Falco.</p>
+				<p>In this game, each card has four features: number, shading, color, and shape. Each characteristic has 3 possible variations.</p>
 				<p>To play, select a trio of cards. You score a point if that trio of cards is a <em>clique</em>, and lose a point otherwise.</p>
-				<p>A trio is considered a <em>clique</em> if, for each characteristic, all three cards have the same variation, or all three cards have different variations.</p>
+				<p>A trio is considered a <em>clique</em> if for every feature, either all three cards have the same variation, or all three cards have different variations.</p>
 			</section>
+      <section>
+        <h2>History</h2>
+        <label>
+          <span>Log</span>
+          <textarea id=log readonly></textarea>
+        </label>
+      </section>
 		</aside>
 		<main id=game>
 		</main>
-    <template id=template>
+    <template id=template-card>
       <label class=card>
         <input class=checkbox type=checkbox>
         <input class=value type=text readonly value=0_0_0_0>
       </label>
+    </template>
+    <template id=template-player>
+      <li class=player></li>
     </template>
 		<script>
     
@@ -138,6 +161,11 @@ const A = (size) => Array(size).fill(0)
 // count frequency of values in array
 const N = (array, value) => array.filter(v => v===value).length
 
+// get template
+const T = (id) => document.getElementById('template-' + id)
+.content.cloneNode(true)
+.firstElementChild
+
 // state
 const s = {
   constants: {
@@ -145,7 +173,9 @@ const s = {
   },
   elements: {
     game: $('#game'),
+    players: $('#players'),
     settings: $('#settings'),
+    log: $('#log'),
   },
   settings: {
     features: 4, // # of features per card
@@ -154,28 +184,31 @@ const s = {
     palette: 0,
     look: 0,
   },
-  players: [ 'You' ],
+  players: {
+    [Math.random()]: {
+      score: 0,
+      name: 'You',
+      local: true,
+    }
+  },
   game: {
-    selected: [],
-    sums: [],
-    scores: [],
-    turn: 0,
-    deck: [],
-    visible: [],
-    history: [],
+    selected: [], // selected cards
+    sums: [], // sum of card feature & variations
+    turn: 0, // id of current turn player
+    deck: [], // all unused cards
+    visible: [], // all visible cards
+    history: [], // history of cliques & miscliques
   }
 }
 
-$$('label').forEach(label=>{
+$$('aside label').forEach(label=>{
 	label.addEventListener('input',event=>{
-		s.settings[event.target.id] = parseInt(event.target.value)
+		s.settings[event.target.parentElement.id] = parseInt(event.target.value)
 		$$('input', label).forEach(input=>{
 			input.value = event.target.value
 		})
 	})
 })
-
-s.elements.settings.addEventListener('submit',newGame)
 
 s.elements.game.addEventListener('change',event => {
   
@@ -200,9 +233,7 @@ s.elements.game.addEventListener('change',event => {
     ))
     
     // take turns changing scores
-    s.game.scores[s.game.turn] += valid ? 1 : -1
-    s.game.turn ++
-    s.game.turn %= s.players.length
+    s.players[s.game.turn].score += valid ? 1 : -1
     
     if(valid){
       s.game.selected
@@ -210,11 +241,16 @@ s.elements.game.addEventListener('change',event => {
       .forEach( index => s.game.visible[index] = s.game.deck.pop() )
     }
     
-    s.game.history.push(s.game.selected.join(', '))
+    s.game.history.push(
+      new Date().toLocaleTimeString() + ': '
+      + s.players[s.game.turn].name
+      + (valid ? ' cliqued ' : ' miscliqued ')
+      + s.game.selected.join(', ')
+    )
     s.game.selected = []
     renderGame()
   }
-	console.log(s.game)
+	//console.log(s.game)
   
 })
 
@@ -267,50 +303,55 @@ function newGame(){
     
   )
   
-  s.game.history = s.game.selected = []
+  s.game.history = []
+  s.game.selected = []
   
   s.game.scores = A(s.players.length)
-  s.game.turn = 0
+  s.game.turn = Object.keys(s.players)[0]
   
-	console.log(s.game)
+	//console.log(s.settings)
+  renderGame()
 }
 
 function renderGame(){
-  $('#game').replaceChildren(...
+  s.elements.game.replaceChildren(...
     s.game.visible
     .map(card => {
-      const element = (
-        document.getElementById('template')
-        .content.cloneNode(true)
-        .firstElementChild
-      )
+      const element = T('card')
       
+      // create classes for CSS, f{feature id}_{variation id}
       element.classList = (
         card.split('_')
         .map( (feature,index) => 'f'+index+'_'+feature )
         .join(' ')
       )
-      
-      const checkbox = $('.checkbox',element)
-      checkbox.checked = s.game.selected.includes(card)
+     
+      $('.checkbox',element).checked = s.game.selected.includes(card)
       
       element.id = $('.value',element).value = card
       
       return element
     })
   )
-  $('#players').replaceChildren(...
-    s.players
-    .map((name, index) => {
-      const element = document.createElement('li')
-      element.textContent = `${name} (${s.game.scores[index]})`
+  s.elements.players.replaceChildren(...
+    Object.values(s.players)
+    .map((player, index) => {
+      const element = T('player')
+      element.textContent = `${player.name} (${player.score})`
       return element
     })
   )
+  console.log(s.game.history)
+  s.elements.log.value = s.game.history.join('\n')
 }
 
+// new game
+s.elements.settings.addEventListener('submit',event=>{
+  event.preventDefault()
+  newGame()
+})
+
 newGame()
-renderGame()
 		</script>
 	</body>
 </html>
