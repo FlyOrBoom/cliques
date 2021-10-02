@@ -1,672 +1,227 @@
-  <!doctype html>
-<html>
-  <head>
-    <title>Cliques!</title>
-    <link rel='icon' type='image/png'  href='assets/favicon.png'>
-    <link rel='preload' href='assets/logo.png' as='image'>
-    <link rel='preload' href='assets/computer.png' as='image'>
-    <link rel='preload' href='assets/friends.png' as='image'>
-    <link rel='preload' href='assets/what.png' as='image'>
-    <link rel='preload' href='assets/numbers.png' as='image'>
-    <link rel='preload' href='assets/plus.png' as='image'>
-    <link rel='preload' href='assets/point.png' as='image'>
-    <link rel='preload' href='assets/points.png' as='image'>
-    <link rel='preload' href='assets/restart.png' as='image'>
-    <link rel='preload' href='assets/vs-computer.png' as='image'>
-    <link rel='preload' href='assets/vs-human.png' as='image'>
-    <style>
-/**{transition-duration:0.01s;}*/
-html,body{
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  margin:0;
-  image-rendering:pixelated;
-  background:#222;
-}
-#rest{
-  display:none;
-}
-.blonk{
-  animation:blonk 3.6s linear infinite;
-  background-size:cover;
-  image-rendering:pixelated;
-  position:fixed;
-  width:100%;
-  height:100%;
-}
-.blonk.pause{
-  animation:none;
-}
-#computer>*,#friends>*{
-  animation:blink 3.6s linear infinite;
-}
-#logo,#logo-small,#computer,#friends,#about{
-  position:relative;
-}
-#logo{
-  top:1.95vmin;
-  width:58.5vmin;
-  height:39vmin;
-  left:calc(50vw - 29.25vmin);
-  animation-delay:0s;
-  background-image:url(assets/logo.png);
-  border:solid #000 2vmin;
-}
-#computer,#friends,#about,#pause{
-  height:18vmin;
-  top:4vmin;
-}
-#computer,#friends{
-  width:91vmin;
-  left:calc(50vw - 45.5vmin);
-}
-#computer{
-  animation-delay:-2.4s;
-  background-image:url(assets/computer.png);
-}
-#friends{
-  top:5vmin;
-  background-image:url(assets/friends.png);
-  animation-delay:-1.2s;
-}
-#about{
-  top:6vmin;
-  background-image:url(assets/what.png);
-  width:67vmin;
-  left:calc(50vw - 33.5vmin);
-  animation-delay:0s;
-}
-#pause{
-  position:fixed;
-  top:81vmin;
-  right:calc(50vw - 45.5vmin);
-  width:11vmin;
-  background-image:url(assets/pause.png);
-}
-#hue{
-  width:11vmin;
-  height:17.9vmin;
-  top:80.75vmin;
-  left:calc(50vw - 45.5vmin);
-  -webkit-appearance: none;
-  cursor:pointer;
-}
-#hue:focus{
-  outline:none;
-}
-#hue::-webkit-slider-runnable-track {
-  -webkit-appearance: none;
-}
-#hue::-webkit-slider-thumb{
-  -webkit-appearance: none;
-  width:1vmin;
-  height:14.5vmin;
-  background:#000;
-  cursor:ew-resize;
-}
-@keyframes blonk{
-  0%{background-color:#68e;}
-  33.332%{background-color:#68e;}
-  33.333%{background-color:#e66;}
-  66.666%{background-color:#e66;}
-  66.667%{background-color:#6e8;}
-  100%{background-color:#6e8;}
-}
-#overview{
-  position:fixed;
-  top:1vmin;
-  left:calc(50vw - 49vmin);
-  width:98vmin;
-  height:98vmin;
-  overflow:scroll;
-  border:solid #000 1vmin;
-  padding:2vmin;
-  box-sizing:border-box;
-  font-family:cliqfont;
-  font-size:11vmin;
-  display:none;
-}
-#overview.vis{
-  display:block;
-}
-@font-face {
-  font-family: "cliqfont";
-  src: url("assets/cliqfont.ttf");
-}
-.button{
-  position:fixed;
-  border:none;
-  cursor:pointer;
-  background-size:cover;
-  background-repeat:no-repeat;
-  border:solid #000 1vmin;
-  box-sizing:border-box;
-}
-#logo-small{
-  position:fixed;
-  top:1vw;
-  left:1vw;
-  width:15vw;
-  height:10vw;
-  background-image:url(assets/logo.png);
-}
-#restart{
-  left:1vw;
-  top:11.5vw;
-  width:5vw;
-  height:10vw;
-  background-image:url(assets/restart.png);
-}
-#player{
-  top:11.5vw;
-  left:6.5vw;
-  width:9.444vw;
-  height:10vw;
-}
-.score{
-  left:1vw;
-  width:15vw;
-}
-#score0{
-  height:calc(50vh - 11.75vw);
-  top:22vw;
-}
-#score1{
-  height:calc(50vh - 11.75vw);
-  bottom:1vw;
-}
-#add{
-  width:15.75vw;
-  height:calc(100vh - 2vw);
-  top:1vw;
-  right:1vw;
-  background-image:url(assets/plus.png);
-  background-size:5vw;
-  background-position:center;
-  opacity:.4;
-  display:block;
-}
-#add:hover{
-  opacity:1;
-}
-#add.disabled{
-  display:none;
-}
-#new{
-  left:10vw;
-}
-#card-container{
-  position:fixed;
-  display:flex;
-  flex-flow:column wrap;
-  align-items:center;
-  align-content:flex-end;
-  justify-content:center;
-  
-  width:64vw;
-  height:100%;
-  right:17.25vw;
-}
-#card-container.stretch{
-  width:80vw;
-  right:.75vw;
-}
-#card-container>*{
-  flex:0 0 0;
-  text-align:center;
-  cursor:pointer;
-  border:.5vw solid #000;
-  width:15vw;
-  flex-basis:calc(100vh/3 - 2vw);
-  max-height:calc(100vh/3 - 2vw);
-  margin:.25vw;
-  display:none;
-}
-#card-container>*.right{
-  border:.5vw solid #6e8;
-}
-#card-container>*.wrong{
-  border:.5vw solid #e66;
-}
-#card-container>*.selected{
-  width:12vw;
-  flex-basis:calc(100vh/3 - 5vw);
-  max-height:calc(100vh/3 - 5vw);
-  margin:1.75vw;
-  filter:brightness(.6);
-  cursor:not-allowed;
-}
-#card-container>*:hover:not(.selected),.button:hover{
-  filter:brightness(.8);
-}
-#card-container>*:focus,.button:focus{
-  outline:none;
-  filter:brightness(.5);
-}
-@media (max-aspect-ratio:1/1){
-  #card-container>*{
-    margin:0;
-    flex-basis:18vh;
-  }
-}
-.svg{
-  width:83.33%;
-  margin-top:5%;
-  height:90%;
-  display:inline-block;
-  stroke-width:5%;
-  pointer-events:none;
-  fill:#000;
-  stroke:#000;
-}
-.color0{
-  background-color:#e66;
-}
-.color1{
-  background-color:#6e8;
-}
-.color2{
-  background-color:#68e;
-}
-.opacity0{
-  fill-opacity:0;
-}
-.opacity1{
-  fill-opacity:.5;
-}
-.opacity2{
-  fill-opacity:1;
-}
-#card-container>*.visible{
-  display:block;
-}
-    </style>
-  </head>
- <body>
-    <div id='start-screen' class='blonk color2'>
-      <div class='button color2 blonk' id='logo' onclick='alert("made with <3 by crossing\npqrstuvwxyz")'></div>
-      <div class='button color1 blonk' id='computer' tabindex='1' onclick='switchplayer();switchplayer();' aria-label='Play against the computer'></div>
-      <div class='button color0 blonk' id='friends' tabindex='2' onclick='switchplayer();' aria-label='Play against your friends'></div>
-      <input class='button color2 blonk' id='hue' type='range' tabindex='3' min='-180' max='180' value='0' step='30' aria-label='Change colors'>
-      <div class='button color2 blonk' id='about' tabindex='4' onclick='showOverview();' aria-label='What is this game?'></div>
-      <div class='button color2 blonk' id='pause' tabindex='5' onclick='pause();' aria-label='pause blinking'></div>
-      <div class='color2' id='overview'>
-Cliques is an open-source game of Set.
-<p>In this game, each card has four characteristics - color, transparency, parts, and shape - and each characteristic has 3 variations.
-<p>To play, select a trio of cards. You score a point if that trio of cards is a "set", and lose a point otherwise.
-<p>A trio is considered a "set" if, for each characteristic, all three cards have the same variation, or all three cards have different variations.
-<div class='button'>X</div>
-      </div>
-    </div>
-    <div id='rest'>
-    <div class='button color2' id='logo-small' onclick='back();' title='back to menu'></div>
-    <div class='button color0' id='restart' onclick='start();' title='start a new game'></div>
-    <div class='button' id='player' onclick='switchplayer();'></div>
-    <div class='button color1 score' id='score0'></div>
-    <div class='button color2 score' id='score1'></div>
-    <!--<div class='button color0 score' id='score2'></div>-->
-    <!--<div class='button color1 score' id='score3'></div>-->
-    <div class='button' id='add' onclick='add();' title='add 3 cards'></div>
-    <div id='card-container'></div>
-    <svg>
-      <!--
-      0: rounded rectangle
-      1: squiggle
-      2: diamond
-      -->
-      <symbol id='s00'>
-      <rect x='5' y='62' width='130' height='34' rx='20'/>
-      </symbol>
-      <symbol id='s10'>
-      <use href='#s00' transform='translate(0 -25)'/>
-      <use href='#s00' transform='translate(0 25)'/>
-      </symbol>
-      <symbol id='s20'>
-      <use href='#s10' transform='translate(0 -25)'/>
-      <use href='#s00' transform='translate(0 50)'/>
-      </symbol>
-      <symbol id='s01'>
-      <path d='M5 75 c 0 0 25 -20 40 -20 c 15 0 35 15 50 15  c 15 0 40 -10 40 -10 v 15 c 0 0 -25 20 -40 20 c -15 0 -35 -15 -50 -15 c -15 0 -40 10 -40 10 z'/>
-      </symbol>
-      <symbol id='s11'>
-      <use href='#s01' transform='translate(0 -25)'/>
-      <use href='#s01' transform='translate(0 25)'/>
-      </symbol>
-      <symbol id='s21'>
-      <use href='#s11' transform='translate(0 -25)'/>
-      <use href='#s01' transform='translate(0 50)'/>
-      </symbol>
-      <symbol id='s02'>
-      <path d='M10 80 l 60 -20 l 60 20 l -60 20 z'/>
-      </symbol>
-      <symbol id='s12'>
-      <use href='#s02' transform='translate(0 -25)'/>
-      <use href='#s02' transform='translate(0 25)'/>
-      </symbol>
-      <symbol id='s22'>
-      <use href='#s12' transform='translate(0 -25)'/>
-      <use href='#s02' transform='translate(0 50)'/>
-      </symbol>
-    </svg>
-    </div>
-    <script>
+<!DOCTYPE html>
+<html lang=en-US dir=ltr>
+  	<head>
+		<meta charset=utf-8>
 
-//0:color
-//1:shade
-//2:parts
-//3:shape
+		<title>Cliques!</title>
+		<meta name=description content=''>
+		<meta name=author content='Xing Liu'>
+		<meta name=viewport content='width=device-width, initial-scale=1.0'>
 
-var startScreen=document.getElementById('start-screen'),
-    player=document.getElementById('player'),
-    overview=document.getElementById('overview'),
+		<link rel=icon type=image/png href=/icon.png>
+	</head>
+	<body>
+		<aside>
+			<h1>Cliques!</h1>
+			<section>
+				<h2>Players</h2>
+				<ol id=players>
+					<li>You</li>
+				</ol>
+				Invite others: <input type=text readonly value=https://x-ing.space/cliques#pqrstuvwxyz>
+			</section>
+			<form id=settings>
+				<h2>Settings</h2>
+				<label id=features>
+					<span>Features</span>
+					<input type=number min=3 max=5 value=4>
+					<input type=range min=3 max=5 value=4>
+				</label>
+				<input type=submit value='New game'>
+			</form>
+			<form id=preferences>
+				<h2>Preferences</h2>
+				<label id=palette>
+					<span>Palette</span>
+					<input type=number min=0 max=3 value=0>
+					<input type=range min=0 max=3 value=0>
+				</label>
+				<label id=look>
+					<span>Look</span>
+					<input type=number min=0 max=3 value=0>
+					<input type=range min=0 max=3 value=0>
+				</label>
+			</form>
+			<section>
+				<h2>How to play</h2>
+				<p>Cliques is an open-source variant of Set.</p>
+				<p>In this game, each card has four features - number, shading, color, and shape - and each characteristic has 3 variations.</p>
+				<p>To play, select a trio of cards. You score a point if that trio of cards is a <em>clique</em>, and lose a point otherwise.</p>
+				<p>A trio is considered a <em>clique</em> if, for each characteristic, all three cards have the same variation, or all three cards have different variations.</p>
+			</section>
+		</aside>
+		<main id=game>
+		</main>
+    <template id=template>
+      <label class=card>
+        <input class=checkbox type=checkbox>
+        <input class=value type=text readonly value=0_0_0_0>
+      </label>
+    </template>
+		<script>
     
-    rest=document.getElementById('rest'),
-    addb=document.getElementById('add'),
-    
-    hue=document.getElementById('hue'),
-    pause=document.getElementById('pause'),
-    blonk=document.getElementsByClassName('blonk'),
-    
-    scoreOf=[0,0,0,0],
-    theScore,
-    theScoreAbs,
-    scoreboard=[document.getElementById('score0'),document.getElementById('score1'),document.getElementById('score2'),document.getElementById('score3')],
+// shortcuts for selecting elements
+const $ = (query = '*', target = document) => target.querySelector(query)
+const $$ = (query = '*', target = document) => Array.from(target.querySelectorAll(query))
 
-    container=document.getElementById('card-container'),
-    card=[],
-    svg=[],
-    use=[],
-    
-    color=['red','green','blue'],
-    shade=['colorful','dim','black'],
-    parts=['one','two','three'],
-    shape=['pill','squiggle','diamond'],
-    
-    visible=[],
-    selected=[],
-    setFiller=[],
-    setsFound=[],
-    
-    count=[[0,0,0],[0,0,0],[0,0,0],[0,0,0]],
-    
-    i=0,
-    j=0,
-    k=0,
-    tick=0,
-    tock=0;
+// create array of 0's
+const A = (size) => Array(size).fill(0)
 
-player.is=0;
-scoreboard.string=['url(assets/numbers.png) ','vw .5vw / 184.444vw no-repeat,','url(assets/points.png) 11.778vw .5vw / 1.667vw no-repeat,','#6e8 url(assets/point.png) 7.889vw .5vw / 3.333vw no-repeat'];
+// count frequency of values in array
+const N = (array, value) => array.filter(v => v===value).length
 
-hue.addEventListener('input',function(){
-  if(Math.abs(hue.value)===180){
-    hue.value=0;
-  }
-  document.body.style.filter='hue-rotate('+hue.value+'deg)';
-});
-hue.addEventListener('change',function(){
-  hue.blur();
-});
-pause.addEventListener('click',function(){
-  if(tock<1){
-    for(i=0;i<blonk.length;i++){
-      blonk[i].classList.add('pause');
-    }
-    tock++;
-    pause.style.backgroundImage='url(assets/go.png)';
-  }else{
-    for(i=0;i<blonk.length;i++){
-      blonk[i].classList.remove('pause');
-    }
-    tock--;
-    pause.style.backgroundImage='url(assets/pause.png)';
-  }
-  pause.blur();
-});
-
-
-function showOverview(){
-  overview.style.display='block';
-}
-
-function removeBlock(){
-  rest.style.display='block';
-  startScreen.style.display='none';
-}
-
-function back(){
-  startScreen.style.display='block';
-  rest.style.display='none';
-}
-
-function switchplayer(){
-  if(player.is===0){
-    player.classList.add('color1');
-    player.classList.remove('color2');
-    player.style.backgroundImage='url(assets/vs-human.png)';
-    player.title='playing against humans';
-    multiplayer();
-    player.is++;
-  }else{
-    player.classList.add('color2');
-    player.classList.remove('color1');
-    player.style.backgroundImage='url(assets/vs-computer.png)';
-    player.title='playing against computer';
-    singleplayer();
-    player.is--;
+// state
+const s = {
+  constants: {
+	  clique: 3, // # of cards per clique, and # of variations per feature
+  },
+  elements: {
+    game: $('#game'),
+    settings: $('#settings'),
+  },
+  settings: {
+    features: 4, // # of features per card
+  },
+  preferences: {
+    palette: 0,
+    look: 0,
+  },
+  players: [ 'You' ],
+  game: {
+    selected: [],
+    sums: [],
+    scores: [],
+    turn: 0,
+    deck: [],
+    visible: [],
+    history: [],
   }
 }
 
-function singleplayer(){
-  start();
-  removeBlock();
-}
+$$('label').forEach(label=>{
+	label.addEventListener('input',event=>{
+		s.settings[event.target.id] = parseInt(event.target.value)
+		$$('input', label).forEach(input=>{
+			input.value = event.target.value
+		})
+	})
+})
 
-function multiplayer(){
-  start();
-  removeBlock();
-}
+s.elements.settings.addEventListener('submit',newGame)
 
-const allEqual=arr=> arr.every( v=> v===arr[0] ); //if all of an array are equal
-
-function score(scoringPlayer,amountScored){
+s.elements.game.addEventListener('change',event => {
   
-  scoreOf[scoringPlayer]+=amountScored;
+  const card = event.target.parentElement.id
   
-  scoreboard.draft='';
+  // adding or removing a card?
+  const addition = event.target.checked
+  addition ? s.game.selected.push(card) : s.game.selected.splice(s.game.selected.indexOf(card))
   
-  theScore=scoreOf[scoringPlayer];
-  theScoreAbs=Math.abs(theScore);
+  // update sum
+  event.target.parentElement.id
+  .split('_')
+  .forEach((feature,index)=>s.game.sums[index][feature] += addition ? 1 : -1)
   
-  if(Math.abs(theScore-450)<550){ //if within limits
-    scoreboard.draft+=(scoreboard.string[0]+String((theScoreAbs%10)*(-16.667)-27)+scoreboard.string[1]); // [?][?][|x%10|]
-    if(theScore<0){ //if negative
-      if(theScore<-9){ //if -xx
-        scoreboard.draft+=(scoreboard.string[0]+'-14.996'+scoreboard.string[1]); //[-][?][?]
-      }else{ //if -x
-        scoreboard.draft+=(scoreboard.string[0]+'-12.772'+scoreboard.string[1]); //[?][-][?]
-      }
-    }
-    if(theScoreAbs>9){
-      scoreboard.draft+=(scoreboard.string[0]+String(Math.floor(theScoreAbs/10)*(-16.667)-29.222)+scoreboard.string[1]); //[?](x/10)[x%10]
-      if(theScore>99){
-        scoreboard.draft+=(String(Math.floor(theScore/100)*(-16.667)-31.444)+scoreboard.string[1]); //(x/100)[x/10][x%10]
-      }
-    }
-    if(theScoreAbs!==1){
-      scoreboard.draft+=scoreboard.string[2]; // [?][?][?][?][?](s)
-    }
-  }else{
-    scoreboard.draft+=(scoreboard.string[0]+'-12.772'+scoreboard.string[1]+scoreboard.string[0]+'-10.5'+scoreboard.string[1]); // [?][-][-][?][?]
+  // if clique reached
+  if(s.game.selected.length === s.constants.clique) {
+    s.game.selected = []
+    const validClique = (
+      s.game.sums.every(
+      feature =>
+      N(feature,1).length === s.constants.clique ||
+      N(feature,s.constants.clique).length === 1
+    ))
+    s.game.scores[s.game.turn] += validClique ? 1 : -1
+    s.game.turn ++
+    s.game.turn %= s.players.length
+    renderGame()
   }
-  scoreboard.draft+=scoreboard.string[3]; // [?][?][?](pt)[?]
+	console.log(s.game)
   
-  scoreboard[scoringPlayer].style.background=scoreboard.draft;
-}
+})
 
-function isSet(){
-  if((count[0].includes(3)||allEqual(count[0]))&&(count[1].includes(3)||allEqual(count[1]))&&(count[2].includes(3)||allEqual(count[2]))&&(count[3].includes(3)||allEqual(count[3]))){
+function newGame(){
+
+	// generate cards
+	s.game.deck = (
     
-    console.log('set!');
-    score(0,1);
-    for(j=0;j<card.length;j++){
-      card[j].classList.add('right');
-    }
+    // allocate space for all cards in deck
+    A(s.constants.clique ** s.settings.features)
     
-    setTimeout(function(){
+    // add in cards
+    .map( (_,i) =>
       
-      for(j=0;j<card.length;j++){
-        card[j].classList.remove('right');
-      }
-      for(j=0;j<3;j++){
-        container.removeChild(selected[0]);
-        if(tick<1){
-          randomCard();
-        }
-      }
+      // allocate space for each feature
+      A(s.settings.features)
       
-      addb.classList.remove('disabled');
-      tick=0;
-      container.classList='';
+      // unwrap index into features
+      // similar to breaking down a number into component digits 
+      .map( (_,k) => Math.floor( i / s.constants.clique**k ) % s.constants.clique )
       
-    },150);
-  }else{
-
-    score(0,-1);
-    for(j=0;j<card.length;j++){
-      card[j].classList.add('wrong');
-    }
+      // strings are easier to handle with HTML
+      .join('_')
+    )
     
-    setTimeout(function(){
-      for(j=0;j<card.length;j++){
-        card[j].classList.remove('selected','wrong');
-      }
-    },150);
-  }
-  count=[[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
-}
+    // shuffle
+    .map((value) => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value)
+  )
 
-function randomCard(last){
-  var rand=Math.floor(card.length*Math.random());
-  if(card[rand].classList.contains('visible')){
-    randomCard(last);
-  }else{
-    card[rand].classList.add('visible');
-    card[rand].style.order=Math.floor(99*Math.random());
-    if(last==true){
-      card[rand].style.order+=99;
-    }
-    card[rand].setAttribute('tabindex',card[rand].style.order+100);
-    card[rand].addEventListener('mousedown',function(){
-      card[rand].blur();
-      if(!(card[rand].classList.contains('selected'))){
-        card[rand].classList.add('selected');
-        count[0][card[rand][0]]++;
-        count[1][card[rand][1]]++;
-        count[2][card[rand][2]]++;
-        count[3][card[rand][3]]++;
-        selected=document.getElementsByClassName('selected');
-        if(selected.length>2){
-          isSet();
-        }
-      }
-    });
-    card[rand].addEventListener('touchstart',function(){
-      card[rand].blur();
-      if(!(card[rand].classList.contains('selected'))){
-        card[rand].classList.add('selected');
-        count[0][card[rand][0]]++;
-        count[1][card[rand][1]]++;
-        count[2][card[rand][2]]++;
-        count[3][card[rand][3]]++;
-        selected=document.getElementsByClassName('selected');
-        if(selected.length>2){
-          isSet();
-        }
-      }
-    });
-  }
-}
-
-function start(){
+	// put some on the table
+	s.game.visible = (
+    
+    // allocate space for all visible cards
+    A(s.constants.clique * s.settings.features)
+    
+    // remove from deck
+    .map( _ => s.game.deck.pop() )
+  )
   
-  scoreOf=[0,0,0,0];
-  score(0,0);
+  // keep track of selected features & variations
+  s.game.sums = (
+    
+    // allocate space for each feature
+    A(s.settings.features)
+    
+    // allocate space for each variation
+    .map( _ => A(s.constants.clique) )
+    
+  )
   
-  //for restarts
-  while(container.hasChildNodes()) {
-    container.removeChild(container.lastChild);
-  }
+  s.game.history = s.game.selected = []
   
-  addb.classList.remove('disabled');
-  tick=0;
-  container.classList='';
+  s.game.scores = A(s.players.length)
+  s.game.turn = 0
   
-  //generates all 81 unique cards
-  for(i=0;i<81;i++){
-    card[i]=document.createElement('div');
-    card[i][0]=i%3;
-    card[i][1]=Math.floor(i%9/3);
-    card[i][2]=Math.floor(i%27/9);
-    card[i][3]=Math.floor(i%81/27);
-    card[i].classList='color'+card[i][0]+' opacity'+card[i][1];
-    card[i].title=parts[card[i][2]]+' '+shade[card[i][1]]+' '+color[card[i][0]]+' '+shape[card[i][3]];
-    if(card[i][2]>0){
-      card[i].title+='s';
-    }
-    
-    svg[i]=document.createElementNS('http://www.w3.org/2000/svg','svg');
-    svg[i].setAttribute('viewBox','0 0 140 160');
-    svg[i].classList='svg';
-    
-    use[i]=document.createElementNS('http://www.w3.org/2000/svg','use');
-    use[i].setAttribute('href','#s'+card[i][2]+card[i][3]);
-    
-    svg[i].appendChild(use[i]);
-    card[i].appendChild(svg[i]);
-    
-    container.appendChild(card[i]);
-  }
-  //selects 12
-  for(i=0;i<12;i++){
-    randomCard();
-  }
+	console.log(s.game)
 }
 
-function add(){
-  if(tick<1){
-    for(k=0;k<3;k++){
-      randomCard(true);
-    }
-    tick=1;
-  }
-  addb.classList.add('disabled');
-  container.classList='stretch';
+function renderGame(){
+  $('#game').replaceChildren(...
+    s.game.visible
+    .map(card => {
+      const element = document.getElementById('template')
+      .content.cloneNode(true)
+      .firstElementChild
+      $('.checkbox',element).checked = s.game.selected.includes(card)
+      element.id = $('.value',element).value = card
+      return element
+    })
+  )
+  $('#players').replaceChildren(...
+    s.players
+    .map((name, index) => {
+      const element = document.createElement('li')
+      element.textContent = `${name} (${s.game.scores[index]})`
+      return element
+    })
+  )
 }
 
-function findSet(){
-  visible=document.getElementsByClassName('visible');
-  //selects two visible cards
-  for(i=0;i<visible.length;i++){ //picks 1 card
-    for(j=0;j<visible.length;j++){ //picks another card
-      if(j!==i){ //if the cards are different
-        for(k=0;k<4;k++){
-          if(visible[i][k]===visible[j][k]){ //if kth characteristic on both are the same
-            setFiller[k]=visible[j][k]; //kth characteristic on the third follows
-          }else{
-            setFiller[k]=(Math.abs(visible[i][k]-visible[j][k])-1); //kth characteristic on the third is different
-          }
-        }
-        setsFound.push([setFiller[0],setFiller[1],setFiller[2],setFiller[3]]); //weird method but works
-        console.log(setFiller);
-        // console.log('0+'+setsFound[0]);
-      }
-    }
-  }
-  setsFound=Array.from(new Set(setsFound));
-  return setsFound;
-}
-    </script>
-  </body>
+
+newGame()
+renderGame()
+		</script>
+	</body>
 </html>
