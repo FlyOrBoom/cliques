@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang=en-US dir=ltr>
   	<head>
@@ -480,11 +481,7 @@ function newGame(){
 }
 
 function renderGame(){
-  s.e.deck.toggleAttribute(
-    'hidden',
-    (s.g.deck.length < s.c.clique) ||
-    (s.g.visible.length >= s.c.clique * (s.s.features + 1)) 
-  )
+  s.e.deck.toggleAttribute( 'hidden', s.g.deck.length < s.c.clique )
   const n = Math.min(s.g.deck.length,5)*2
   s.e.deck.style.boxShadow = (
     A(n).map(
@@ -530,7 +527,6 @@ function renderGame(){
       return element
     })
   )
-  console.log(s.g.history)
   s.e.log.value = s.g.history.join('\n')
 }
 
