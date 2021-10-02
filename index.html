@@ -243,7 +243,6 @@ $$('aside label').forEach(label=>{
 })
 
 s.e.game.addEventListener('change',event => {
-  
   const card = event.target.parentElement.id
   
   // adding or removing a card?
@@ -254,14 +253,15 @@ s.e.game.addEventListener('change',event => {
   event.target.parentElement.id
   .split('_')
   .forEach((feature,index)=>s.g.sums[index][feature] += addition ? 1 : -1)
-  
+  	console.log(s.g)
+
   // if clique reached
   if(s.g.selected.length === s.c.clique) {
     const valid = (
       s.g.sums.every(
       feature =>
-      N(feature,1).length === s.c.clique ||
-      N(feature,s.c.clique).length === 1
+      ( N(feature,1) === s.c.clique ) ||
+      ( N(feature,s.c.clique) === 1 )
     ))
     
     // take turns changing scores
@@ -279,10 +279,10 @@ s.e.game.addEventListener('change',event => {
       + (valid ? ' cliqued ' : ' miscliqued ')
       + s.g.selected.join(', ')
     )
-    s.g.selected = []
+    
+    softResetGame()
     renderGame()
   }
-	//console.log(s.g)
   
 })
 
@@ -324,19 +324,9 @@ function newGame(){
     .map( _ => s.g.deck.pop() )
   )
   
-  // keep track of selected features & variations
-  s.g.sums = (
-    
-    // allocate space for each feature
-    A(s.s.features)
-    
-    // allocate space for each variation
-    .map( _ => A(s.c.clique) )
-    
-  )
+  softResetGame()
   
   s.g.history = []
-  s.g.selected = []
   
   s.g.scores = A(s.p.length)
   s.g.turn = Object.keys(s.p)[0]
@@ -383,6 +373,22 @@ function renderGame(){
   )
   console.log(s.g.history)
   s.e.log.value = s.g.history.join('\n')
+}
+
+function softResetGame(){
+    
+  // keep track of selected features & variations
+  s.g.sums = (
+    
+    // allocate space for each feature
+    A(s.s.features)
+    
+    // allocate space for each variation
+    .map( _ => A(s.c.clique) )
+    
+  )
+  s.g.selected = []
+
 }
 
 // new game
