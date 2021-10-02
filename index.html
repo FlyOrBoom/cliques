@@ -47,6 +47,9 @@ aside label {
   display: flex;
   flex-direction: column;
 }
+#log {
+  font-family: inherit;
+}
 
 .card {
   display: flex;
@@ -69,21 +72,21 @@ aside label {
   stroke: var(--color);
   stroke-width: 5;
 }
-    
-/* colors */
-.f0_0 { --color: red }
-.f0_1 { --color: green }
-.f0_2 { --color: blue }
+
+/* number */
+.f0_0>:first-child, .f0_0>:last-child { display: none }
+.f0_1>:last-child { display: none }
+.f0_1 { transform: translateY(20px) }
 
 /* shades */
 .f1_0 { fill-opacity: 0 }
 .f1_1 { fill-opacity: 0.3 }
 .f1_2 { fill-opacity: 1 }
 
-/* counts */
-.f2_0>:first-child, .f2_0>:last-child { display: none }
-.f2_1>:last-child { display: none }
-.f2_1 { transform: translateY(20px) }
+/* colors */
+.f2_0 { --color: red }
+.f2_1 { --color: green }
+.f2_2 { --color: blue }
 
 /* shapes */
 .f3_0 {  }
@@ -158,7 +161,7 @@ aside label {
         <h2>History</h2>
         <label>
           <span>Log</span>
-          <textarea id=log readonly></textarea>
+          <textarea id=log readonly rows=20></textarea>
         </label>
       </section>
 		</aside>
@@ -174,7 +177,6 @@ aside label {
               <use class='shape' href='#c3_0' transform='translate(0 50)'/>
           </svg>
           <input class=checkbox type=checkbox hidden>
-          <input class=value type=text value=0_0_0_0 readonly hidden>
         </label>
       </template>
       <template id=template-player>
@@ -208,6 +210,14 @@ const N = (array, value) => array.filter(v => v===value).length
 const T = (id) => document.getElementById('template-' + id)
 .content.cloneNode(true)
 .firstElementChild
+
+// split underscores into features
+const _ = (card) => card.split('_')
+
+// make readable
+const R = (card) => _(card).map(
+  (variation,feature) => [ '123', 'abc', 'RGB', '-~+', 'xyz', '/&^' ][feature][variation]
+).join(' ')
 
 // state
 const s = {
@@ -272,8 +282,7 @@ s.e.game.addEventListener('change',event => {
   addition ? s.g.selected.push(card) : s.g.selected.splice(s.g.selected.indexOf(card))
   
   // update sum
-  event.target.parentElement.id
-  .split('_')
+  _(event.target.parentElement.id)
   .forEach((feature,index)=>s.g.sums[index][feature] += addition ? 1 : -1)
   	console.log(s.g)
 
@@ -296,10 +305,7 @@ s.e.game.addEventListener('change',event => {
     }
     
     s.g.history.unshift(
-      new Date().toLocaleTimeString() + ': '
-      + s.p[s.g.turn].name
-      + (valid ? ' cliqued ' : ' miscliqued ')
-      + s.g.selected.join(', ')
+      `${ new Date().toLocaleTimeString() }: ${ s.p[s.g.turn].name } ${ valid ? '' : 'mis' }cliqued { ${ s.g.selected.map(R).join(', ') } }.`
     )
     
     softResetGame()
@@ -361,26 +367,20 @@ function renderGame(){
   s.e.game.replaceChildren(...
     s.g.visible
     .map(card => {
-      const features = card.split('_')
       const element = T('card')
       
       // create classes for CSS, f{feature id}_{variation id}
-      $('.graphic',element).classList = (
-        features
-        .map( (feature,index) => 'f'+index+'_'+feature )
-        .join(' ')
-      )
+      $('.graphic',element).classList = _(card).map(
+        (variation,feature) => 'f'+feature+'_'+variation
+      ).join(' ')
      
       $('.checkbox',element).checked = s.g.selected.includes(card)
       
-      element.id = $('.value',element).value = card
+      element.id = card
+      element.title = R(card)
       
-      $$('.shape',element)
-      .forEach( shape =>
-        shape.setAttribute(
-          'href',
-          `#c${s.c.SHAPE}_${features[s.c.SHAPE] || 0}`
-        )
+      $$('.shape',element).forEach( shape =>
+        shape.setAttribute( 'href', `#c${s.c.SHAPE}_${features[s.c.SHAPE] || 0}` )
       )
       
       return element
