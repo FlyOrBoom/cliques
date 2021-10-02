@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang=en-US dir=ltr>
   	<head>
@@ -9,9 +10,10 @@
 		<meta name=viewport content='width=device-width, initial-scale=1.0'>
 
 		<link rel=icon type=image/png href=/icon.png>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital@0;1&display=swap" rel="stylesheet">
     <style>
 html, body {
-  background: #eee;
+  background: #cbf;
   margin: 0;
   width: 100%;
   height: 100%;
@@ -19,11 +21,16 @@ html, body {
 body {
   display: flex;
   font-size: 12pt;
+  font-family: 'Bodoni Moda', serif;
 }
 body > * {
   height: 100%;
   overflow: scroll;
   padding: 1rem;
+}
+h1,h2,h3,h4,h5,h6 {
+  font-weight: normal;
+  margin: 0;
 }
 * {
   box-sizing: border-box;
@@ -33,22 +40,37 @@ body > * {
 [hidden] {
   display: none;
 }
+
+/* SIDE PANEL */
 aside {
   max-width: 20rem;
 }
+aside label {
+  display: flex;
+  flex-direction: column;
+  margin: 1rem 0;
+}
+#log {
+  font-family: inherit;
+}
+h1 {
+  text-align: center;
+  font-size: 3rem;
+  font-style: italic;
+  filter: drop-shadow(0 2pt white);
+}
+h2 {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1pt solid white;
+}
+
 main {
   display: grid;
   flex-grow: 1;
 	grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
 	grid-auto-rows: auto;
   grid-gap: 1rem;
-}
-aside label {
-  display: flex;
-  flex-direction: column;
-}
-#log {
-  font-family: inherit;
 }
 
 .card {
@@ -380,7 +402,7 @@ function renderGame(){
       element.title = R(card)
       
       $$('.shape',element).forEach( shape =>
-        shape.setAttribute( 'href', `#c${s.c.SHAPE}_${features[s.c.SHAPE] || 0}` )
+        shape.setAttribute( 'href', `#c${s.c.SHAPE}_${_(card)[s.c.SHAPE] || 0}` )
       )
       
       return element
