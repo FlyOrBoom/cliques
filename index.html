@@ -11,7 +11,7 @@
 		<link rel=icon type=image/png href=/icon.png>
     <style>
 html, body {
-  background: white;
+  background: #eee;
   margin: 0;
   width: 100%;
   height: 100%;
@@ -27,6 +27,8 @@ body > * {
 }
 * {
   box-sizing: border-box;
+  transition-duration: 200ms;
+  transition-property: background fill;
 }
 [hidden] {
   display: none;
@@ -37,7 +39,7 @@ aside {
 main {
   display: grid;
   flex-grow: 1;
-	grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
 	grid-auto-rows: auto;
   grid-gap: 1rem;
 }
@@ -47,24 +49,38 @@ aside label {
 }
 
 .card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-radius: 1rem;
   padding: 1rem;
+  background: white;
+}
+.card:hover {
+  background: #aaa;
+}
+.card[data-checked] {
+  background: #888;
+}
+.card svg {
+  width: 7rem;
+  height: 8rem;
 }
     
 /* colors */
-.f0_0 { background: red }
-.f0_1 { background: green }
-.f0_2 { background: blue }
+.f0_0 { fill: red }
+.f0_1 { fill: green }
+.f0_2 { fill: blue }
 
 /* shades */
-.f1_0 { opacity: 0.5 }
-.f1_1 { opacity: 0.75 }
+.f1_0 { opacity: 0.33 }
+.f1_1 { opacity: 0.66 }
 .f1_2 { opacity: 1 }
 
 /* counts */
-.f2_0 svg>:first-child, .f2_0 svg>:last-child { display: none }
-.f2_1 svg>:last-child { display: none }
-.f2_1 svg { transform: translateY(20px) }
+.f2_0>:first-child, .f2_0>:last-child { display: none }
+.f2_1>:last-child { display: none }
+.f2_1 { transform: translateY(20px) }
 
 /* shapes */
 .f3_0 {  }
@@ -148,8 +164,9 @@ aside label {
     <aside hidden>
       <template id=template-card>
         <label class=card>
-          <svg>
+          <svg class=graphic viewBox='0 0 140 160'>
               <use class='shape' href='#c3_0' transform='translate(0 -50)'/>
+<!--           <rect width='100%' height='100%' opacity='0.5'/> -->
               <use class='shape' href='#c3_0' transform='translate(0 0)'/>
               <use class='shape' href='#c3_0' transform='translate(0 50)'/>
           </svg>
@@ -243,10 +260,12 @@ $$('aside label').forEach(label=>{
 })
 
 s.e.game.addEventListener('change',event => {
-  const card = event.target.parentElement.id
+  const element = event.target.parentElement
+  const card = element.id
   
   // adding or removing a card?
-  const addition = event.target.checked
+  const addition = element.dataset.checked = event.target.checked
+  
   addition ? s.g.selected.push(card) : s.g.selected.splice(s.g.selected.indexOf(card))
   
   // update sum
@@ -343,7 +362,7 @@ function renderGame(){
       const element = T('card')
       
       // create classes for CSS, f{feature id}_{variation id}
-      element.classList = (
+      $('.graphic',element).classList = (
         features
         .map( (feature,index) => 'f'+index+'_'+feature )
         .join(' ')
@@ -357,9 +376,10 @@ function renderGame(){
       .forEach( shape =>
         shape.setAttribute(
           'href',
-          `#c${s.c.SHAPE}_${features[s.c.SHAPE]}`
+          `#c${s.c.SHAPE}_${features[s.c.SHAPE] || 0}`
         )
       )
+      
       return element
     })
   )
