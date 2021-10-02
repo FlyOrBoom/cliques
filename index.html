@@ -86,7 +86,7 @@ const s = {
     palette: 0,
     look: 0,
   },
-  players: [ 'You' ],
+  players: [ 'You', 'Me' ],
   game: {
     selected: [],
     sums: [],
@@ -124,16 +124,26 @@ s.elements.game.addEventListener('change',event => {
   
   // if clique reached
   if(s.game.selected.length === s.constants.clique) {
-    s.game.selected = []
-    const validClique = (
+    const valid = (
       s.game.sums.every(
       feature =>
       N(feature,1).length === s.constants.clique ||
       N(feature,s.constants.clique).length === 1
     ))
-    s.game.scores[s.game.turn] += validClique ? 1 : -1
+    
+    // take turns changing scores
+    s.game.scores[s.game.turn] += valid ? 1 : -1
     s.game.turn ++
     s.game.turn %= s.players.length
+    
+    if(valid){
+      s.game.selected
+      .map( card => s.game.visible.indexOf(card) )
+      .forEach( index => s.game.visible[index] = s.game.deck.pop() )
+    }
+    
+    s.game.history.push(s.game.selected.join(', '))
+    s.game.selected = []
     renderGame()
   }
 	console.log(s.game)
