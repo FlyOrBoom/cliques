@@ -9,6 +9,64 @@
 		<meta name=viewport content='width=device-width, initial-scale=1.0'>
 
 		<link rel=icon type=image/png href=/icon.png>
+    <style>
+html, body {
+  background: white;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+}
+body {
+  display: flex;
+  font-size: 12pt;
+}
+body > * {
+  height: 100%;
+  overflow: scroll;
+  box-sizing: border-box;
+  padding: 1rem;
+}
+aside {
+  max-width: 20rem;
+}
+main {
+  display: grid;
+  flex-grow: 1;
+	grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+	grid-auto-rows: auto;
+  grid-gap: 1rem;
+}
+aside label {
+  display: flex;
+  flex-direction: column;
+}
+
+.card {
+  border-radius: 1rem;
+  padding: 1rem;
+}
+    
+/* colors */
+.f0_0 { background: red }
+.f0_1 { background: green }
+.f0_2 { background: blue }
+
+/* shades */
+.f1_0 { opacity: 0.5 }
+.f1_1 { opacity: 0.75 }
+.f1_2 { opacity: 1 }
+
+/* counts */
+.f2_0 {  }
+.f2_1 {  }
+.f2_2 {  }
+
+/* shapes */
+.f3_0 {  }
+.f3_1 {  }
+.f3_2 {  }
+
+    </style>
 	</head>
 	<body>
 		<aside>
@@ -22,17 +80,27 @@
 			</section>
 			<form id=settings>
 				<h2>Settings</h2>
+				<label id=time>
+					<span>Time limit (seconds) (0 is infinite)</span>
+					<input type=number min=0 max=100 value=10>
+					<input type=range min=0 max=100 value=10>
+				</label>
 				<label id=features>
-					<span>Features</span>
+					<span>Difficulty (number of features per card)</span>
 					<input type=number min=3 max=5 value=4>
 					<input type=range min=3 max=5 value=4>
+				</label>
+				<label id=features>
+					<span>Threshold for extra cards (% voted)</span>
+					<input type=number min=0 max=100 value=100>
+					<input type=range min=0 max=100 value=100>
 				</label>
 				<input type=submit value='New game'>
 			</form>
 			<form id=preferences>
 				<h2>Preferences</h2>
 				<label id=palette>
-					<span>Palette</span>
+					<span>Color palette</span>
 					<input type=number min=0 max=3 value=0>
 					<input type=range min=0 max=3 value=0>
 				</label>
@@ -86,7 +154,7 @@ const s = {
     palette: 0,
     look: 0,
   },
-  players: [ 'You', 'Me' ],
+  players: [ 'You' ],
   game: {
     selected: [],
     sums: [],
@@ -211,11 +279,23 @@ function renderGame(){
   $('#game').replaceChildren(...
     s.game.visible
     .map(card => {
-      const element = document.getElementById('template')
-      .content.cloneNode(true)
-      .firstElementChild
-      $('.checkbox',element).checked = s.game.selected.includes(card)
+      const element = (
+        document.getElementById('template')
+        .content.cloneNode(true)
+        .firstElementChild
+      )
+      
+      element.classList = (
+        card.split('_')
+        .map( (feature,index) => 'f'+index+'_'+feature )
+        .join(' ')
+      )
+      
+      const checkbox = $('.checkbox',element)
+      checkbox.checked = s.game.selected.includes(card)
+      
       element.id = $('.value',element).value = card
+      
       return element
     })
   )
@@ -228,7 +308,6 @@ function renderGame(){
     })
   )
 }
-
 
 newGame()
 renderGame()
