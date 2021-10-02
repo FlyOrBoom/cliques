@@ -273,7 +273,7 @@ s.e.game.addEventListener('change',event => {
       .forEach( index => s.g.visible[index] = s.g.deck.pop() )
     }
     
-    s.g.history.push(
+    s.g.history.unshift(
       new Date().toLocaleTimeString() + ': '
       + s.p[s.g.turn].name
       + (valid ? ' cliqued ' : ' miscliqued ')
