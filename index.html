@@ -65,17 +65,20 @@ aside label {
 .card svg {
   width: 7rem;
   height: 8rem;
+  fill: var(--color);
+  stroke: var(--color);
+  stroke-width: 5;
 }
     
 /* colors */
-.f0_0 { fill: red }
-.f0_1 { fill: green }
-.f0_2 { fill: blue }
+.f0_0 { --color: red }
+.f0_1 { --color: green }
+.f0_2 { --color: blue }
 
 /* shades */
-.f1_0 { opacity: 0.33 }
-.f1_1 { opacity: 0.66 }
-.f1_2 { opacity: 1 }
+.f1_0 { fill-opacity: 0 }
+.f1_1 { fill-opacity: 0.3 }
+.f1_2 { fill-opacity: 1 }
 
 /* counts */
 .f2_0>:first-child, .f2_0>:last-child { display: none }
