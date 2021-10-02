@@ -23,8 +23,13 @@ body {
 body > * {
   height: 100%;
   overflow: scroll;
-  box-sizing: border-box;
   padding: 1rem;
+}
+* {
+  box-sizing: border-box;
+}
+[hidden] {
+  display: none;
 }
 aside {
   max-width: 20rem;
@@ -57,9 +62,9 @@ aside label {
 .f1_2 { opacity: 1 }
 
 /* counts */
-.f2_0 {  }
-.f2_1 {  }
-.f2_2 {  }
+.f2_0 svg>:first-child, .f2_0 svg>:last-child { display: none }
+.f2_1 svg>:last-child { display: none }
+.f2_1 svg { transform: translateY(20px) }
 
 /* shapes */
 .f3_0 {  }
@@ -140,15 +145,33 @@ aside label {
 		</aside>
 		<main id=game>
 		</main>
-    <template id=template-card>
-      <label class=card>
-        <input class=checkbox type=checkbox>
-        <input class=value type=text readonly value=0_0_0_0>
-      </label>
-    </template>
-    <template id=template-player>
-      <li class=player></li>
-    </template>
+    <aside hidden>
+      <template id=template-card>
+        <label class=card>
+          <svg>
+              <use class='shape' href='#c3_0' transform='translate(0 -50)'/>
+              <use class='shape' href='#c3_0' transform='translate(0 0)'/>
+              <use class='shape' href='#c3_0' transform='translate(0 50)'/>
+          </svg>
+          <input class=checkbox type=checkbox hidden>
+          <input class=value type=text value=0_0_0_0 readonly hidden>
+        </label>
+      </template>
+      <template id=template-player>
+        <li class=player></li>
+      </template>
+      <svg>
+        <symbol id='c3_0'> <!-- pill -->
+          <rect x='5' y='62' width='130' height='34' rx='20'/>
+        </symbol>
+        <symbol id='c3_1'> <!-- squiggle -->
+          <path d='M5 75 c 0 0 25 -20 40 -20 c 15 0 35 15 50 15  c 15 0 40 -10 40 -10 v 15 c 0 0 -25 20 -40 20 c -15 0 -35 -15 -50 -15 c -15 0 -40 10 -40 10 z'/>
+        </symbol>
+        <symbol id='c3_2'> <!-- diamond -->
+          <path d='M10 80 l 60 -20 l 60 20 l -60 20 z'/>
+        </symbol>
+      </svg>
+    </aside>
 		<script>
     
 // shortcuts for selecting elements
@@ -168,30 +191,39 @@ const T = (id) => document.getElementById('template-' + id)
 
 // state
 const s = {
-  constants: {
+  // constants / enums
+  c: {
 	  clique: 3, // # of cards per clique, and # of variations per feature
+    COUNT: 0,
+    SHADE: 1,
+    COLOR: 2,
+    SHAPE: 3,
+    ANGLE: 4,
+    MSTRY: 5,
   },
-  elements: {
+  // DOM elements
+  e: {
     game: $('#game'),
     players: $('#players'),
     settings: $('#settings'),
     log: $('#log'),
   },
-  settings: {
+  // settings
+  s: {
     features: 4, // # of features per card
-  },
-  preferences: {
     palette: 0,
     look: 0,
   },
-  players: {
+  // players
+  p: {
     [Math.random()]: {
       score: 0,
       name: 'You',
       local: true,
     }
   },
-  game: {
+  // game
+  g: {
     selected: [], // selected cards
     sums: [], // sum of card feature & variations
     turn: 0, // id of current turn player
@@ -203,74 +235,74 @@ const s = {
 
 $$('aside label').forEach(label=>{
 	label.addEventListener('input',event=>{
-		s.settings[event.target.parentElement.id] = parseInt(event.target.value)
+		s.s[event.target.parentElement.id] = parseInt(event.target.value)
 		$$('input', label).forEach(input=>{
 			input.value = event.target.value
 		})
 	})
 })
 
-s.elements.game.addEventListener('change',event => {
+s.e.game.addEventListener('change',event => {
   
   const card = event.target.parentElement.id
   
   // adding or removing a card?
   const addition = event.target.checked
-  addition ? s.game.selected.push(card) : s.game.selected.splice(s.game.selected.indexOf(card))
+  addition ? s.g.selected.push(card) : s.g.selected.splice(s.g.selected.indexOf(card))
   
   // update sum
   event.target.parentElement.id
   .split('_')
-  .forEach((feature,index)=>s.game.sums[index][feature] += addition ? 1 : -1)
+  .forEach((feature,index)=>s.g.sums[index][feature] += addition ? 1 : -1)
   
   // if clique reached
-  if(s.game.selected.length === s.constants.clique) {
+  if(s.g.selected.length === s.c.clique) {
     const valid = (
-      s.game.sums.every(
+      s.g.sums.every(
       feature =>
-      N(feature,1).length === s.constants.clique ||
-      N(feature,s.constants.clique).length === 1
+      N(feature,1).length === s.c.clique ||
+      N(feature,s.c.clique).length === 1
     ))
     
     // take turns changing scores
-    s.players[s.game.turn].score += valid ? 1 : -1
+    s.p[s.g.turn].score += valid ? 1 : -1
     
     if(valid){
-      s.game.selected
-      .map( card => s.game.visible.indexOf(card) )
-      .forEach( index => s.game.visible[index] = s.game.deck.pop() )
+      s.g.selected
+      .map( card => s.g.visible.indexOf(card) )
+      .forEach( index => s.g.visible[index] = s.g.deck.pop() )
     }
     
-    s.game.history.push(
+    s.g.history.push(
       new Date().toLocaleTimeString() + ': '
-      + s.players[s.game.turn].name
+      + s.p[s.g.turn].name
       + (valid ? ' cliqued ' : ' miscliqued ')
-      + s.game.selected.join(', ')
+      + s.g.selected.join(', ')
     )
-    s.game.selected = []
+    s.g.selected = []
     renderGame()
   }
-	//console.log(s.game)
+	//console.log(s.g)
   
 })
 
 function newGame(){
 
 	// generate cards
-	s.game.deck = (
+	s.g.deck = (
     
     // allocate space for all cards in deck
-    A(s.constants.clique ** s.settings.features)
+    A(s.c.clique ** s.s.features)
     
     // add in cards
     .map( (_,i) =>
       
       // allocate space for each feature
-      A(s.settings.features)
+      A(s.s.features)
       
       // unwrap index into features
       // similar to breaking down a number into component digits 
-      .map( (_,k) => Math.floor( i / s.constants.clique**k ) % s.constants.clique )
+      .map( (_,k) => Math.floor( i / s.c.clique**k ) % s.c.clique )
       
       // strings are easier to handle with HTML
       .join('_')
@@ -283,70 +315,78 @@ function newGame(){
   )
 
 	// put some on the table
-	s.game.visible = (
+	s.g.visible = (
     
     // allocate space for all visible cards
-    A(s.constants.clique * s.settings.features)
+    A(s.c.clique * s.s.features)
     
     // remove from deck
-    .map( _ => s.game.deck.pop() )
+    .map( _ => s.g.deck.pop() )
   )
   
   // keep track of selected features & variations
-  s.game.sums = (
+  s.g.sums = (
     
     // allocate space for each feature
-    A(s.settings.features)
+    A(s.s.features)
     
     // allocate space for each variation
-    .map( _ => A(s.constants.clique) )
+    .map( _ => A(s.c.clique) )
     
   )
   
-  s.game.history = []
-  s.game.selected = []
+  s.g.history = []
+  s.g.selected = []
   
-  s.game.scores = A(s.players.length)
-  s.game.turn = Object.keys(s.players)[0]
+  s.g.scores = A(s.p.length)
+  s.g.turn = Object.keys(s.p)[0]
   
-	//console.log(s.settings)
+	//console.log(s.s)
   renderGame()
 }
 
 function renderGame(){
-  s.elements.game.replaceChildren(...
-    s.game.visible
+  s.e.game.replaceChildren(...
+    s.g.visible
     .map(card => {
+      const features = card.split('_')
       const element = T('card')
       
       // create classes for CSS, f{feature id}_{variation id}
       element.classList = (
-        card.split('_')
+        features
         .map( (feature,index) => 'f'+index+'_'+feature )
         .join(' ')
       )
      
-      $('.checkbox',element).checked = s.game.selected.includes(card)
+      $('.checkbox',element).checked = s.g.selected.includes(card)
       
       element.id = $('.value',element).value = card
       
+      $$('.shape',element)
+      .forEach( shape =>
+        shape.setAttribute(
+          'href',
+          `#c${s.c.SHAPE}_${features[s.c.SHAPE]}`
+        )
+      )
       return element
     })
   )
-  s.elements.players.replaceChildren(...
-    Object.values(s.players)
+  s.e.players.replaceChildren(...
+    Object.values(s.p)
     .map((player, index) => {
       const element = T('player')
       element.textContent = `${player.name} (${player.score})`
       return element
     })
   )
-  console.log(s.game.history)
-  s.elements.log.value = s.game.history.join('\n')
+  console.log(s.g.history)
+  s.e.log.value = s.g.history.join('\n')
 }
 
 // new game
-s.elements.settings.addEventListener('submit',event=>{
+s.e.settings.addEventListener('submit',event=>{
   event.preventDefault()
   newGame()
 })
