@@ -402,7 +402,7 @@ s.e.game.addEventListener('change',event => {
       .forEach( index => s.g.visible.splice( index, 1, 
           // final parameter of splice is the replacement.
           // spread empty array if already enough
-          ...A( s.g.visible.length <= s.g.regularVisible )
+          ...A( parseInt(s.g.visible.length <= s.g.regularVisible) )
           .fill( s.g.deck.pop() )
         )
       )
