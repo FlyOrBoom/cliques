@@ -1,198 +1,189 @@
-
 <!DOCTYPE html>
 <html lang=en-US dir=ltr>
-  	<head>
+	<head>
 		<meta charset=utf-8>
-
 		<title>Cliques!</title>
 		<meta name=description content=''>
 		<meta name=author content='Xing Liu'>
 		<meta name=viewport content='width=device-width, initial-scale=1.0'>
-
 		<link rel=icon type=image/png href=/icon.png>
-    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital@0;1&display=swap" rel="stylesheet">
-    <style>
+		<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital@0;1&display=swap" rel="stylesheet">
+		<style>
 html{
-  font-size: 16px;
-  font-family: 'Bodoni Moda', serif;
+     font-size: 16px;
+     font-family: 'Bodoni Moda', serif;
 }
-html, body {
-  margin: 0;
-  width: 100%;
-  height: 100%;
+ html, body {
+     margin: 0;
+     width: 100%;
+     height: 100%;
 }
-
-.p0 { 
-  --fill: #ffe; --theme: #bed; --stroke: #fff;
-  --red: #f08; --green: #4a8; --blue: #84f;
+ .p0 {
+     --fill: #ffe; --theme: #bed; --stroke: #fff;
+     --red: #f08; --green: #4a8; --blue: #84f;
 }
-.p1 { 
-  --fill: #024; --theme: #469; --stroke: #000;
-  --red: #f90; --green: #0fa; --blue: #01f;
+ .p1 {
+     --fill: #024; --theme: #469; --stroke: #000;
+     --red: #f90; --green: #0fa; --blue: #01f;
 }
-.p2 { 
-  --theme: #cbf; --fill: #fff; --stroke: #000;
-  --red: #f44; --green: #4e4; --blue: #44e;
+ .p2 {
+     --theme: #cbf; --fill: #fff; --stroke: #000;
+     --red: #f44; --green: #4e4; --blue: #44e;
 }
-.p3 { 
-  --fill: #106; --theme: #ffe; --stroke: #fff;
-  --red: #fbf; --green: #fda; --blue: #70f;
+ .p3 {
+     --fill: #106; --theme: #ffe; --stroke: #fff;
+     --red: #fbf; --green: #fda; --blue: #70f;
 }
-
-body {
-  display: flex;
-  background: var(--theme);
+ body {
+     display: flex;
+     background: var(--theme);
 }
-main, aside {
-  overflow: scroll;
-  padding: 1rem;
+ main, aside {
+     overflow: scroll;
+     padding: 1rem;
 }
-h1,h2,h3,h4,h5,h6 {
-  font-weight: normal;
-  margin: 0;
+ h1,h2,h3,h4,h5,h6 {
+     font-weight: normal;
+     margin: 0;
 }
-* {
-  box-sizing: border-box;
-  transition-duration: 200ms;
-  transition-property: background, fill, box-shadow;
+ * {
+     box-sizing: border-box;
+     transition-duration: 200ms;
+     transition-property: background, fill, box-shadow;
 }
-[hidden] {
-  display: none;
-  visibility: hidden;
-  position: fixed;
+ [hidden] {
+     display: none;
+     visibility: hidden;
+     position: fixed;
 }
-
 /* SIDE PANEL */
-@media screen and (max-width:50rem) {
-  body {
-    flex-direction: column-reverse;
-    height: auto;
-  }
-  aside {
-    max-width: 100%;
-  }
+ @media screen and (max-width:50rem) {
+     body {
+         flex-direction: column-reverse;
+         height: auto;
+    }
+     aside {
+         max-width: 100%;
+    }
 }
-@media screen and (min-width:50rem) {
-  main, aside {
-    height: 100%;
-  }
-  aside {
-    height: auto;
-    width: 24rem;
-  }
+ @media screen and (min-width:50rem) {
+     main, aside {
+         height: 100%;
+    }
+     aside {
+         height: auto;
+         width: 24rem;
+    }
 }
-aside label {
-  display: flex;
-  flex-direction: column;
-  margin: 1rem 0;
+ aside label {
+     display: flex;
+     flex-direction: column;
+     margin: 1rem 0;
 }
-#log {
-  font-family: inherit;
-  font-size: inherit;
-  background: none;
-  border: none;
+ #log {
+     font-family: inherit;
+     font-size: inherit;
+     background: none;
+     border: none;
 }
-h1 {
-  text-align: center;
-  font-size: 3rem;
-  font-style: italic;
-  filter: drop-shadow(0 2pt white);
+ h1 {
+     text-align: center;
+     font-size: 3rem;
+     font-style: italic;
+     filter: drop-shadow(0 2pt white);
 }
-h2 {
-  margin-top: 2rem;
-  padding-top: 1rem;
-  border-top: 1pt solid white;
+ h2 {
+     margin-top: 2rem;
+     padding-top: 1rem;
+     border-top: 1pt solid white;
 }
-
-main {
-  display: grid;
-  flex-grow: 1;
-  font-size: calc(2px + 2vmin);
-	grid-template-columns: repeat(auto-fit, 7em);
-	grid-auto-rows: 8em;
-  grid-gap: 1em;
-  justify-content: center;
+ main {
+     display: grid;
+     flex-grow: 1;
+     font-size: calc(2px + 2vmin);
+     grid-template-columns: repeat(auto-fit, 7em);
+     grid-auto-rows: 8em;
+     grid-gap: 1em;
+     justify-content: center;
 }
-.card {
-  --extra: var(--theme);
-  border-radius: 1em;
-  padding: 1em;
-  width: 100%;
-  height: 100%;
-  background: var(--fill);
-  box-shadow: 1pt 1pt var(--stroke);
-  cursor: pointer;
+ .card {
+     --extra: var(--theme);
+     border-radius: 1em;
+     padding: 1em;
+     width: 100%;
+     height: 100%;
+     background: var(--fill);
+     box-shadow: 1pt 1pt var(--stroke);
+     cursor: pointer;
 }
-.card:hover,
-.card:focus {
-  --extra: var(--fill);
-  box-shadow: 2pt 2pt var(--stroke);
+ .card:hover, .card:focus {
+     --extra: var(--fill);
+     box-shadow: 2pt 2pt var(--stroke);
 }
-.card#deck {
-  z-index: 100000;
-  order: 100000;
-  grid-column-start: -2;
-  display: flex;
-  flex-direction: column;
-  line-height: 1.3;
+ .card#deck {
+     z-index: 100000;
+     order: 100000;
+     grid-column-start: -2;
+     display: flex;
+     flex-direction: column;
+     line-height: 1.3;
 }
-.card#deck>:nth-child(1){ color: var(--red) }
-.card#deck>:nth-child(2){ color: var(--green); font-size: 2rem }
-.card#deck>:nth-child(3){ color: var(--blue) }
-
-.card[data-checked=true] {
-  box-shadow: -2pt -2pt;
+ .card#deck>:nth-child(1){
+     color: var(--red) 
 }
-.card.fade {
-  animation: 500ms fade;
+ .card#deck>:nth-child(2){
+     color: var(--green);
+     font-size: 2rem 
 }
-@keyframes fade {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
+ .card#deck>:nth-child(3){
+     color: var(--blue) 
 }
-svg {
-  --color: black;
-  fill: var(--color);
-  stroke: var(--color);
-  stroke-width: 5;
+ .card[data-checked=true] {
+     box-shadow: -2pt -2pt;
 }
-
+ .card.fade {
+     animation: 500ms fade;
+}
+ @keyframes fade {
+     0% { opacity: 0; }
+     100% { opacity: 1; }
+}
+ svg {
+     --color: black;
+     fill: var(--color);
+     stroke: var(--color);
+     stroke-width: 5;
+}
 /* number */
-.f0_0>:first-child, .f0_0>:last-child { display: none }
-.f0_1>:last-child { display: none }
-
-.f0_1>.shape { y: 20 }
+ .f0_0>:first-child, .f0_0>:last-child { opacity: 0 }
+ .f0_1>:last-child { opacity: 0  }
+ .f0_1>.shape { y: 20  }
+ 
 /* shades */
-.f1_0 { fill-opacity: 0 }
-.f1_1 { fill-opacity: 0.3 }
-.f1_2 { fill-opacity: 1 }
-
+ .f1_0 { fill-opacity: 0  }
+ .f1_1 { fill-opacity: 0.3  }
+ .f1_2 { fill-opacity: 1  }
+ 
 /* colors */
-
-.f2_0 { --color: var(--red) }
-.f2_1 { --color: var(--blue) }
-.f2_2 { --color: var(--green) }
+ .f2_0 { --color: var(--red)  }
+ .f2_1 { --color: var(--blue)  }
+ .f2_2 { --color: var(--green)  }
 
 /* shapes */
-.f3_0 {  }
-.f3_1 {  }
-.f3_2 {  }
+ .f3_0 { }
+ .f3_1 { }
+ .f3_2 { }
 
 /* rotations */
-.f4_0 { transform: rotate(0deg) }
-.f4_1 { transform: rotate(45deg) }
-.f4_2 { transform: rotate(-45deg) }
+ .f4_0 { transform: rotate(0deg)  }
+ .f4_1 { transform: rotate(45deg)  }
+ .f4_2 { transform: rotate(-45deg)  }
 
 /* something */
-.f5_0 {  }
-.f5_1 {  }
-.f5_2 {  }
-
-    </style>
+ .f5_0 { }
+ .f5_1 { }
+ .f5_2 { }
+		</style>
 	</head>
 	<body class='p0 l0'>
 		<aside>
@@ -202,41 +193,41 @@ svg {
 				<ol id=players>
 					<li>You</li>
 				</ol>
-        <label>
-          <span>Invite others online:</span>
-         <input type=text readonly value=https://x-ing.space/cliques#pqrstuvwxyz disabled>
-        </label>
+				<label>
+				<span>Invite others online:</span>
+				<input type=text readonly value=https://x-ing.space/cliques#pqrstuvwxyz disabled>
+				</label>
 			</section>
 			<form id=settings>
 				<h2>Settings</h2>
 				<label id=time>
-					<span>Time limit (seconds) (0 is infinite)</span>
-					<input type=number min=0 max=300 value=10 disabled>
-					<input type=range min=0 max=300 value=10 disabled>
+				<span>Time limit (seconds) (0 is infinite)</span>
+				<input type=number min=0 max=300 value=10 disabled>
+				<input type=range min=0 max=300 value=10 disabled>
 				</label>
 				<label id=features>
-					<span>Difficulty (number of features per card)</span>
-					<input type=number min=1 max=6 value=4>
-					<input type=range min=2 max=6 value=4>
+				<span>Difficulty (number of features per card)</span>
+				<input type=number min=1 max=6 value=4>
+				<input type=range min=2 max=6 value=4>
 				</label>
 				<label id=features>
-					<span>Threshold for extra cards (% voted in favor)</span>
-					<input type=number min=0 max=100 value=100 disabled>
-					<input type=range min=0 max=100 value=100 disabled>
+				<span>Threshold for extra cards (% voted in favor)</span>
+				<input type=number min=0 max=100 value=100 disabled>
+				<input type=range min=0 max=100 value=100 disabled>
 				</label>
 				<input type=submit value='New game'>
 			</form>
 			<form id=preferences>
 				<h2>Preferences</h2>
 				<label id=palette>
-					<span>Color palette</span>
-					<input type=number min=0 max=3 value=0>
-					<input type=range min=0 max=3 value=0>
+				<span>Color palette</span>
+				<input type=number min=0 max=3 value=0>
+				<input type=range min=0 max=3 value=0>
 				</label>
 				<label id=look>
-					<span>Look</span>
-					<input type=number min=0 max=3 value=0 disabled>
-					<input type=range min=0 max=3 value=0 disabled>
+				<span>Look</span>
+				<input type=number min=0 max=3 value=0 disabled>
+				<input type=range min=0 max=3 value=0 disabled>
 				</label>
 			</form>
 			<section>
@@ -246,50 +237,52 @@ svg {
 				<p>To play, select a trio of cards. You score a point if that trio of cards is a <em>clique</em>, and lose a point otherwise.</p>
 				<p>A trio is considered a <em>clique</em> if for every feature, either all three cards have the same variation, or all three cards have different variations.</p>
 			</section>
-      <section>
-        <h2>History</h2>
-        <label>
-          <span>Log</span>
-          <textarea id=log readonly rows=20></textarea>
-        </label>
-      </section>
+			<section>
+				<h2>History</h2>
+				<label>
+				<span>Log</span>
+				<textarea id=log readonly rows=20></textarea>
+				</label>
+			</section>
 		</aside>
 		<main id=game>
-      <label class=card id=deck>
-        <span>Add</span>
-        <span>3</span>
-        <span>cards</span>
-        <input type=button hidden>
-      </label>
-    </main>
-    <aside hidden>
-      <template id=template-card>
-        <label class=card>
-          <svg viewBox='0 0 140 160'>
-              <use class='shape' href='#c3_0' transform='translate(0 -50)'/>
-              <use class='shape' href='#c3_0' transform='translate(0 0)'/>
-              <use class='shape' href='#c3_0' transform='translate(0 50)'/>
-          </svg>
-          <input type=checkbox hidden>
-        </label>
-      </template>
-      <template id=template-player>
-        <li class=player></li>
-      </template>
-      <svg>
-        <symbol id='c3_0'> <!-- pill -->
-          <rect x='5' y='62' width='130' height='34' rx='20'/>
-        </symbol>
-        <symbol id='c3_1'> <!-- squiggle -->
-          <path d='M5 75 c 0 0 25 -20 40 -20 c 15 0 35 15 50 15  c 15 0 40 -10 40 -10 v 15 c 0 0 -25 20 -40 20 c -15 0 -35 -15 -50 -15 c -15 0 -40 10 -40 10 z'/>
-        </symbol>
-        <symbol id='c3_2'> <!-- diamond -->
-          <path d='M10 80 l 60 -20 l 60 20 l -60 20 z'/>
-        </symbol>
-      </svg>
-    </aside>
+			<label class=card id=deck>
+			<span>Add</span>
+			<span>3</span>
+			<span>cards</span>
+			<input type=button hidden>
+			</label>
+		</main>
+		<aside hidden>
+			<template id=template-card>
+				<label class=card>
+					<svg viewBox='0 0 140 160'>
+						<use class='shape' href='#c3_0' transform='translate(0 -50)'/>
+						<use class='shape' href='#c3_0' transform='translate(0 0)'/>
+						<use class='shape' href='#c3_0' transform='translate(0 50)'/>
+					</svg>
+					<input type=checkbox hidden>
+				</label>
+			</template>
+			<template id=template-player>
+				<li class=player></li>
+			</template>
+			<svg>
+				<symbol id='c3_0'>
+					<!-- pill -->
+					<rect x='5' y='62' width='130' height='34' rx='20'/>
+				</symbol>
+				<symbol id='c3_1'>
+					<!-- squiggle -->
+					<path d='M5 75 c 0 0 25 -20 40 -20 c 15 0 35 15 50 15  c 15 0 40 -10 40 -10 v 15 c 0 0 -25 20 -40 20 c -15 0 -35 -15 -50 -15 c -15 0 -40 10 -40 10 z'/>
+				</symbol>
+				<symbol id='c3_2'>
+					<!-- diamond -->
+					<path d='M10 80 l 60 -20 l 60 20 l -60 20 z'/>
+				</symbol>
+			</svg>
+		</aside>
 		<script>
-    
 // shortcuts for selecting elements
 const $ = (query = '*', target = document) => target.querySelector(query)
 const $$ = (query = '*', target = document) => Array.from(target.querySelectorAll(query))
@@ -321,7 +314,7 @@ const recenter = (element) => element.style.alignContent = element.scrollHeight 
 const s = {
   // constants / enums
   c: {
-	  clique: 3, // # of cards per clique, and # of variations per feature
+    clique: 3, // # of cards per clique, and # of variations per feature
     COUNT: 0,
     SHADE: 1,
     COLOR: 2,
@@ -364,23 +357,23 @@ const s = {
 }
 
 $$('aside label').forEach(label=>{
-	label.addEventListener('input',event=>{
-		s.s[event.target.parentElement.id] = parseInt(event.target.value)
-		$$('input', label).forEach(input=>{
-			input.value = event.target.value
-		})
-	})
+  label.addEventListener('input',event=>{
+    s.s[event.target.parentElement.id] = parseInt(event.target.value)
+    $$('input', label).forEach(input=>{
+      input.value = event.target.value
+    })
+  })
 })
 
 s.e.game.addEventListener('change',event => {
   const element = event.target.parentElement
   const card = element.id
-  
+
   // adding or removing a card?
   const addition = element.dataset.checked = event.target.checked
-  
+
   addition ? s.g.selected.push(card) : s.g.selected.splice(s.g.selected.indexOf(card))
-  
+
   // update sum
   _(event.target.parentElement.id)
   .forEach((feature,index)=>s.g.sums[index][feature] += addition ? 1 : -1)
@@ -393,28 +386,30 @@ s.e.game.addEventListener('change',event => {
       ( N(feature,1) === s.c.clique ) ||
       ( N(feature,s.c.clique) === 1 )
     ))
-    
+
     // take turns changing scores
     s.p[s.g.turn].score += valid ? 1 : -1
-    
+
     if(valid){
+      console.log(s.g.visible)
       s.g.selected.map( card => s.g.visible.indexOf(card) )
       .forEach( index => s.g.visible.splice( index, 1, 
           // final parameter of splice is the replacement.
           // spread empty array if already enough
-          ...(s.g.visible.length < s.g.regularVisible ? [s.g.deck.pop()] : [])
+          ...(s.g.visible.length <= s.g.regularVisible ? [s.g.deck.pop()] : [])
         )
       )
+      console.log(s.g.visible)
     }
-    
+
     s.g.history.unshift(
       `${ new Date().toLocaleTimeString() }: ${ s.p[s.g.turn].name } ${ valid ? '' : 'mis' }cliqued { ${ s.g.selected.map(R).join(', ') } }.`
     )
-    
+
     softResetGame()
     renderGame()
   }
-  
+
 })
 
 window.addEventListener('resize', _ => recenter(s.e.game))
@@ -433,45 +428,45 @@ s.e.preferences.addEventListener('input',event=>{
 
 function newGame(){
 
-	// generate cards
-	s.g.deck = (
-    
+  // generate cards
+  s.g.deck = (
+
     // allocate space for all cards in deck
     A(s.c.clique ** s.s.features)
-    
+
     // add in cards
     .map( (_,i) =>
-      
+
       // allocate space for each feature
       A(s.s.features)
-      
+
       // unwrap index into features
       // similar to breaking down a number into component digits 
       .map( (_,k) => Math.floor( i / s.c.clique**k ) % s.c.clique )
-      
+
       // strings are easier to handle with HTML
       .join('_')
     )
-    
+
     // shuffle
     .map((value) => ({ value, sort: Math.random() }))
     .sort((a, b) => a.sort - b.sort)
     .map(({ value }) => value)
   )
 
-	// put some on the table
+  // put some on the table
   s.g.regularVisible = s.c.clique * s.s.features
-	s.g.visible = A(s.g.regularVisible).map( _ => s.g.deck.pop() )
-  
+  s.g.visible = A(s.g.regularVisible).map( _ => s.g.deck.pop() )
+
   softResetGame()
-  
+
   s.g.history = []
-  
+
   s.g.scores = A(s.p.length)
   s.g.turn = Object.keys(s.p)[0]
-  
+
   s.e.game.style.fontSize = `calc((2px + 1vmin + 1vmax)*${Math.min(1,3.5/Math.log(s.g.deck.length))})`
-  
+
   renderGame()
 }
 
@@ -488,12 +483,12 @@ function renderGame(){
     ).join(',')
   )
   s.e.deck.style.transform = `translate(${-n/2}pt,${-n/2}pt)`
-  
+
   s.e.game.removeChild(s.e.deck)
-  
+
   while(s.e.game.childElementCount > s.g.visible.length)
     s.e.game.removeChild(s.e.game.lastElementChild)
-    
+
   while(s.e.game.childElementCount < s.g.visible.length)
     s.e.game.appendChild(T('card'))
 
@@ -504,7 +499,7 @@ function renderGame(){
     element.dataset.checked = s.g.selected.includes(card)
 
     if(element.id === card) return
-  
+
     // create classes for CSS, f{feature id}_{variation id}
     element.firstElementChild.classList = _(card).map(
       (variation,feature) => 'f'+feature+'_'+variation
@@ -519,9 +514,9 @@ function renderGame(){
       shape.setAttribute( 'href', `#c${s.c.SHAPE}_${_(card)[s.c.SHAPE] || 0}` )
     )
   })
-  
+
   s.e.game.appendChild(s.e.deck)
-    
+
   s.e.players.replaceChildren(...
     Object.values(s.p)
     .map((player, index) => {
@@ -534,16 +529,16 @@ function renderGame(){
 }
 
 function softResetGame(){
-    
+
   // keep track of selected features & variations
   s.g.sums = (
-    
+
     // allocate space for each feature
     A(s.s.features)
-    
+
     // allocate space for each variation
     .map( _ => A(s.c.clique) )
-    
+
   )
   s.g.selected = []
 
@@ -556,6 +551,7 @@ s.e.settings.addEventListener('submit',event=>{
 })
 
 newGame()
+					
 		</script>
 	</body>
 </html>
