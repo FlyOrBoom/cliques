@@ -398,12 +398,13 @@ s.e.game.addEventListener('change',event => {
     s.p[s.g.turn].score += valid ? 1 : -1
     
     if(valid){
-      s.g.selected.forEach( index =>
-        s.g.visible.splice(...[
-          s.g.visible.indexOf(index),
-          1,
-          ( s.g.visible.length <= s.g.regularVisible ) && s.g.deck.pop()
-        ].filter(Boolean))
+      s.g.selected.map( card => s.g.visible.indexOf(card) )
+      .forEach( index => s.g.visible.splice( index, 1, 
+          // final parameter of splice is the replacement.
+          // spread empty array if already enough
+          ...A( s.g.visible.length <= s.g.regularVisible )
+          .fill( s.g.deck.pop() )
+        )
       )
     }
     
