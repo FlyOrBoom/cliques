@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang=en-US dir=ltr>
 	<head>
@@ -181,8 +182,9 @@ html{
 
 /* something */
  .f5_0 { }
- .f5_1 { }
- .f5_2 { }
+ .f5_1>.shape { stroke-dasharray: 1em 2em }
+ .f5_2 { stroke-dasharray: 2em 1em }
+ 
 		</style>
 	</head>
 	<body class='p0 l0'>
@@ -202,12 +204,12 @@ html{
 				<h2>Settings</h2>
 				<label id=time>
 				<span>Time limit (seconds) (0 is infinite)</span>
-				<input type=number min=0 max=300 value=10 disabled>
-				<input type=range min=0 max=300 value=10 disabled>
+				<input type=number min=0 value=10>
+				<input type=range min=0 max=300 value=10>
 				</label>
 				<label id=features>
 				<span>Difficulty (number of features per card)</span>
-				<input type=number min=1 max=6 value=4>
+				<input type=number min=2 max=6 value=4>
 				<input type=range min=2 max=6 value=4>
 				</label>
 				<label id=features>
