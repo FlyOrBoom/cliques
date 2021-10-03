@@ -367,52 +367,6 @@ $$('aside label').forEach(label=>{
   })
 })
 
-s.e.game.addEventListener('change',event => {
-  const element = event.target.parentElement
-  const card = element.id
-
-  // adding or removing a card?
-  const addition = element.dataset.checked = event.target.checked
-
-  addition ? s.g.selected.push(card) : s.g.selected.splice(s.g.selected.indexOf(card))
-
-  // update sum
-  _(event.target.parentElement.id)
-  .forEach((feature,index)=>s.g.sums[index][feature] += addition ? 1 : -1)
-
-  // if clique reached
-  if(s.g.selected.length === s.c.clique) {
-    const valid = (
-      s.g.sums.every(
-      feature =>
-      ( N(feature,1) === s.c.clique ) ||
-      ( N(feature,s.c.clique) === 1 )
-    ))
-
-    // take turns changing scores
-    s.p[s.g.turn].score += valid ? 1 : -1
-
-    if(valid){
-      console.log(s.g.visible)
-      s.g.selected.map( card => s.g.visible.indexOf(card) )
-      .forEach( index => s.g.visible.splice( index, 1, 
-          // final parameter of splice is the replacement.
-          // spread empty array if already enough
-          ...(s.g.visible.length <= s.g.regularVisible ? [s.g.deck.pop()] : [])
-        )
-      )
-      console.log(s.g.visible)
-    }
-
-    s.g.history.unshift(
-      `${ new Date().toLocaleTimeString() }: ${ s.p[s.g.turn].name } ${ valid ? '' : 'mis' }cliqued { ${ s.g.selected.map(R).join(', ') } }.`
-    )
-
-    softResetGame()
-    renderGame()
-  }
-
-})
 
 window.addEventListener('resize', _ => recenter(s.e.game))
 recenter(s.e.game)
@@ -472,6 +426,48 @@ function newGame(){
   renderGame()
 }
 
+s.e.game.addEventListener('change',event => {
+  const element = event.target.parentElement
+  const card = element.id
+
+  // adding or removing a card?
+  const addition = element.dataset.checked = event.target.checked
+
+  addition ? s.g.selected.push(card) : s.g.selected.splice(s.g.selected.indexOf(card))
+
+  // update sum
+  _(event.target.parentElement.id)
+  .forEach((feature,index)=>s.g.sums[index][feature] += addition ? 1 : -1)
+
+  // if clique reached
+  if(s.g.selected.length === s.c.clique) {
+    const valid = (
+      s.g.sums.every(
+      feature =>
+      ( N(feature,1) === s.c.clique ) ||
+      ( N(feature,s.c.clique) === 1 )
+    ))
+
+    // take turns changing scores
+    s.p[s.g.turn].score += valid ? 1 : -1
+
+    if(valid){
+      s.g.selected.forEach( card => s.g.visible.splice(
+        s.g.visible.indexOf(card), 1, 
+        ...( s.g.visible.length <= s.g.regularVisible ? [s.g.deck.pop()] : [])
+      ) )
+    }
+
+    s.g.history.unshift(
+      `${ new Date().toLocaleTimeString() }: ${ s.p[s.g.turn].name } ${ valid ? '' : 'mis' }cliqued { ${ s.g.selected.map(R).join(', ') } }.`
+    )
+
+    softResetGame()
+    renderGame()
+  }
+
+})
+
 function renderGame(){
   s.e.deck.toggleAttribute(
     'hidden',
@@ -496,6 +492,8 @@ function renderGame(){
 
   s.g.visible.forEach((card, index) => {
     const element = s.e.game.children[index]
+    
+    element.classList.remove('fade')
 
     element.lastElementChild.checked =
     element.dataset.checked = s.g.selected.includes(card)
