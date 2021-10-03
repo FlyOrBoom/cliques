@@ -400,7 +400,7 @@ s.e.game.addEventListener('change',event => {
     if(valid){
       s.g.selected.forEach( index =>
         s.g.visible.splice(...[
-          s.g.visible.indexOf(card),
+          s.g.visible.indexOf(index),
           1,
           ( s.g.visible.length <= s.g.regularVisible ) && s.g.deck.pop()
         ].filter(Boolean))
@@ -489,14 +489,16 @@ function renderGame(){
   )
   s.e.deck.style.transform = `translate(${-n/2}pt,${-n/2}pt)`
   
-  while(s.e.game.childElementCount - 1 > s.g.visible.length)
+  s.e.game.removeChild(s.e.deck)
+  
+  while(s.e.game.childElementCount > s.g.visible.length)
     s.e.game.removeChild(s.e.game.lastElementChild)
     
-  while(s.e.game.childElementCount - 1 < s.g.visible.length)
+  while(s.e.game.childElementCount < s.g.visible.length)
     s.e.game.appendChild(T('card'))
 
   s.g.visible.forEach((card, index) => {
-    const element = s.e.game.children[index + 1]
+    const element = s.e.game.children[index]
 
     element.lastElementChild.checked =
     element.dataset.checked = s.g.selected.includes(card)
@@ -517,6 +519,8 @@ function renderGame(){
       shape.setAttribute( 'href', `#c${s.c.SHAPE}_${_(card)[s.c.SHAPE] || 0}` )
     )
   })
+  
+  s.e.game.appendChild(s.e.deck)
     
   s.e.players.replaceChildren(...
     Object.values(s.p)
