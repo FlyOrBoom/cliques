@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang=en-US dir=ltr>
 	<head>
@@ -196,42 +197,47 @@ html{
 				<ol id=players>
 					<li>You</li>
 				</ol>
-				<label>
+<!-- 				<label>
 				<span>Invite others online:</span>
-				<input type=text readonly value=https://x-ing.space/cliques#pqrstuvwxyz disabled>
-				</label>
+				  <input type=text readonly value=https://x-ing.space/cliques#pqrstuvwxyz disabled>
+				</label> -->
 			</section>
 			<form id=settings>
 				<h2>Settings</h2>
-				<label id=time>
-				<span>Time limit (seconds) (0 is infinite)</span>
-				<input type=number min=0 value=10>
-				<input type=range min=0 max=300 value=10>
+				<label id=decks>
+          <span>Decks (0 is infinite)</span>
+          <input type=number min=0 value=0>
+          <input type=range min=0 max=10 value=0>
 				</label>
+<!-- 				<label id=time>
+          <span>Time limit (seconds) (0 is infinite)</span>
+          <input type=number min=0 value=10>
+          <input type=range min=0 max=300 value=10>
+				</label> -->
 				<label id=features>
-				<span>Difficulty (number of features per card)</span>
-				<input type=number min=2 max=6 value=4>
-				<input type=range min=2 max=6 value=4>
+          <span>Difficulty (number of features per card)</span>
+          <input type=number min=2 max=6 value=4>
+          <input type=range min=2 max=6 value=4>
 				</label>
-				<label id=features>
-				<span>Threshold for extra cards (% voted in favor)</span>
-				<input type=number min=0 max=100 value=100 disabled>
-				<input type=range min=0 max=100 value=100 disabled>
-				</label>
+<!-- 				<label id=threshold>
+          <span>Threshold for extra cards (% voted in favor)</span>
+          <input type=number min=0 max=100 value=100 disabled>
+          <input type=range min=0 max=100 value=100 disabled>
+				</label> -->
 				<input type=submit value='New game'>
 			</form>
 			<form id=preferences>
 				<h2>Preferences</h2>
 				<label id=palette>
-				<span>Color palette</span>
-				<input type=number min=0 max=3 value=0>
-				<input type=range min=0 max=3 value=0>
+          <span>Color palette</span>
+          <input type=number min=0 max=3 value=0>
+          <input type=range min=0 max=3 value=0>
 				</label>
-				<label id=look>
-				<span>Look</span>
-				<input type=number min=0 max=3 value=0 disabled>
-				<input type=range min=0 max=3 value=0 disabled>
-				</label>
+<!-- 				<label id=look>
+          <span>Look</span>
+          <input type=number min=0 max=3 value=0 disabled>
+          <input type=range min=0 max=3 value=0 disabled>
+				</label> -->
 			</form>
 			<section>
 				<h2>How to play</h2>
@@ -334,12 +340,17 @@ const s = {
     preferences: $('#preferences'),
     log: $('#log'),
   },
-  // settings
-  s: {
+  // live-updating settings
+  ls: {
+    decks: 0, // decks of cards (0=inf)
+    time: 0, // time allowed after clique buzz
     features: 4, // # of features per card
+    threshold: 100, /// % majority for extra cards
     palette: 0,
     look: 0,
   },
+  // fixed-per-game settings
+  s: {},
   // players
   p: {
     [Math.random()]: {
@@ -356,12 +367,15 @@ const s = {
     deck: [], // all unused cards
     visible: [], // all visible cards
     history: [], // history of cliques & miscliques
+    tally: {
+      cards: 0,
+    }
   }
 }
 
 $$('aside label').forEach(label=>{
   label.addEventListener('input',event=>{
-    s.s[event.target.parentElement.id] = parseInt(event.target.value)
+    s.ls[event.target.parentElement.id] = parseInt(event.target.value)
     $$('input', label).forEach(input=>{
       input.value = event.target.value
     })
@@ -380,16 +394,20 @@ s.e.deck.addEventListener('click',event=>{
 })
 
 s.e.preferences.addEventListener('input',event=>{
-  document.body.classList = 'p'+s.s.palette
+  document.body.classList = 'p'+s.ls.palette
 })
 
 function newGame(){
+
+  // freeze settings for game
+  s.s = { ... s.ls }
+  console.log(s.s)
 
   // generate cards
   s.g.deck = (
 
     // allocate space for all cards in deck
-    A(s.c.clique ** s.s.features)
+    A( s.c.clique ** s.s.features )
 
     // add in cards
     .map( (_,i) =>
@@ -412,13 +430,12 @@ function newGame(){
   )
 
   // put some on the table
-  s.g.regularVisible = s.c.clique * s.s.features
-  s.g.visible = A(s.g.regularVisible).map( _ => s.g.deck.pop() )
+  s.g.visible = A(s.c.clique * s.s.features).map( _ => s.g.deck.pop() )
 
   softResetGame()
 
   s.g.history = []
-
+  s.g.tally = s.g.visible.length + s.g.clique
   s.g.scores = A(s.p.length)
   s.g.turn = Object.keys(s.p)[0]
 
@@ -453,13 +470,28 @@ s.e.game.addEventListener('change',event => {
     s.p[s.g.turn].score += valid ? 1 : -1
 
     if(valid){
-      s.g.selected.forEach( card => s.g.visible.splice(
-        s.g.visible.indexOf(card), 1, ...(
-          ( s.g.visible.length <= s.g.regularVisible ) &&
-          ( s.g.deck.length > 0 ) ?
-          [s.g.deck.pop()] :
-          []
-      ) ) )
+      
+      s.g.selected.forEach( card => {
+        
+        // add card back to deck if > 1 deck
+        if (
+          s.s.decks === 0 ||
+          s.g.tally < s.s.decks * (s.c.clique ** s.s.features) 
+        )
+          s.g.deck.push(card)
+        
+        // remove card from visible; replace if deck still exist
+        s.g.visible.splice(
+          s.g.visible.indexOf(card), 1, ...(
+            ( s.g.visible.length <= s.c.clique * s.s.features ) &&
+            ( s.g.deck.length > 0 ) ?
+            [ s.g.deck.pop() ] :
+            []
+        ) )
+        
+        s.g.tally++
+        
+      })
     }
 
     s.g.history.unshift(
@@ -476,7 +508,7 @@ function renderGame(){
   s.e.deck.toggleAttribute(
     'hidden',
     (s.g.deck.length < s.c.clique) ||
-    (s.g.visible.length >= s.g.regularVisible + s.c.clique) 
+    (s.g.visible.length >= s.c.clique * s.s.features + s.c.clique) 
   )
   const n = Math.min(s.g.deck.length,5)*2
   s.e.deck.style.boxShadow = (
