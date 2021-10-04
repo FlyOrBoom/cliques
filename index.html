@@ -478,7 +478,7 @@ s.e.game.addEventListener('change',event => {
           s.s.decks === 0 ||
           s.g.tally < s.s.decks * (s.c.clique ** s.s.features) 
         )
-          s.g.deck.push(card)
+          s.g.deck.unshift(card)
         
         // remove card from visible; replace if deck still exist
         s.g.visible.splice(
