@@ -93,12 +93,12 @@ html{
      text-align: center;
      font-size: 3rem;
      font-style: italic;
-     filter: drop-shadow(0 2pt white);
+     filter: drop-shadow(0 .2rem white);
 }
  h2 {
      margin-top: 2rem;
      padding-top: 1rem;
-     border-top: 1pt solid white;
+     border-top: .1rem solid white;
 }
  main {
      display: grid;
@@ -116,12 +116,12 @@ html{
      width: 100%;
      height: 100%;
      background: var(--fill);
-     box-shadow: 1pt 1pt var(--stroke);
+     box-shadow: .1rem .1rem var(--stroke);
      cursor: pointer;
 }
  .card:hover, .card:focus {
      --extra: var(--fill);
-     box-shadow: 2pt 2pt var(--stroke);
+     box-shadow: .2rem .2rem var(--color);
 }
  .card#deck {
      z-index: 100000;
@@ -142,7 +142,7 @@ html{
      color: var(--blue) 
 }
  .card[data-checked=true] {
-     box-shadow: -2pt -2pt;
+     box-shadow: 0 0 0 .2rem var(--color);
 }
  .card.fade {
      animation: 500ms fade;
@@ -151,21 +151,21 @@ html{
      0% { opacity: 0; }
      100% { opacity: 1; }
 }
- svg {
-     --color: black;
+.card>svg {
      fill: var(--color);
      stroke: var(--color);
      stroke-width: 5;
 }
 /* number */
- .f0_0>:first-child, .f0_0>:last-child { opacity: 0 }
- .f0_1>:last-child { opacity: 0  }
- .f0_1>.shape { y: 20  }
+ .f0_0>svg>:first-child, .f0_0>svg>:last-child,
+ .f0_1>svg>:last-child { opacity: 0  }
+ .f0_1>svg>:first-child { transform: translate(0, -25px) }
+ .f0_1>svg>:nth-child(2) { transform: translate(0, 25px) }
  
 /* shades */
- .f1_0 { fill-opacity: 0  }
- .f1_1 { fill-opacity: 0.3  }
- .f1_2 { fill-opacity: 1  }
+ .f1_0>svg { fill-opacity: 0  }
+ .f1_1>svg { fill-opacity: 0.3  }
+ .f1_2>svg { fill-opacity: 1  }
  
 /* colors */
  .f2_0 { --color: var(--red)  }
@@ -178,14 +178,14 @@ html{
  .f3_2 { }
 
 /* rotations */
- .f4_0 { transform: rotate(0deg)  }
- .f4_1 { transform: rotate(45deg)  }
- .f4_2 { transform: rotate(-45deg)  }
+ .f4_0>svg { transform: rotate(0deg)  }
+ .f4_1>svg { transform: rotate(45deg)  }
+ .f4_2>svg { transform: rotate(-45deg)  }
 
 /* something */
- .f5_0 { }
- .f5_1>.shape { stroke-dasharray: 1em 2em }
- .f5_2 { stroke-dasharray: 2em 1em }
+ .f5_0>svg { }
+ .f5_1>svg>* { stroke-dasharray: 1em 2em }
+ .f5_2>svg>* { stroke-dasharray: 2em 1em }
  
 		</style>
 	</head>
@@ -513,7 +513,7 @@ function renderGame(){
   const n = Math.min(s.g.deck.length,5)*2
   s.e.deck.style.boxShadow = (
     A(n).map(
-      (_, i) => `${i}pt ${i}pt var(--${ i%2 ? 'stroke' : i/2 < s.c.clique ? 'extra' : 'theme'})`
+      (_, i) => `.${i}rem .${i}rem var(--${ i%2 ? 'stroke' : i/2 < s.c.clique ? 'extra' : 'theme'})`
     ).join(',')
   )
   s.e.deck.style.transform = `translate(${-n/2}pt,${-n/2}pt)`
@@ -537,9 +537,9 @@ function renderGame(){
     if(element.id === card) return
 
     // create classes for CSS, f{feature id}_{variation id}
-    element.firstElementChild.classList = _(card).map(
+    element.classList = _(card).map(
       (variation,feature) => 'f'+feature+'_'+variation
-    ).join(' ')
+    ).concat(['card']).join(' ')
 
     element.id = card
     element.title = R(card)
