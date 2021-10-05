@@ -1,6 +1,3 @@
-
-
-
 <!DOCTYPE html>
 <html lang=en-US dir=ltr>
 	<head>
@@ -21,140 +18,157 @@ html{
      width: 100%;
      height: 100%;
 }
- .p0 {
+.p0, body {
      --fill: #ffe; --theme: #bed; --stroke: #fff;
      --red: #f08; --green: #4a8; --blue: #84f;
 }
- .p1 {
+.p1 {
      --fill: #024; --theme: #469; --stroke: #000;
      --red: #f90; --green: #0fa; --blue: #01f;
 }
- .p2 {
+.p2 {
      --theme: #cbf; --fill: #fff; --stroke: #000;
      --red: #f44; --green: #4e4; --blue: #44e;
 }
- .p3 {
+.p3 {
      --fill: #106; --theme: #ffe; --stroke: #fff;
      --red: #fbf; --green: #fda; --blue: #70f;
 }
  body {
-     display: flex;
-     background: var(--theme);
+    display: flex;
+    background: var(--theme);
 }
- main, aside {
-     overflow: scroll;
-     padding: 1rem;
+aside,
+main {
+    overflow: scroll;
+    padding: 1rem;
 }
- h1,h2,h3,h4,h5,h6 {
-     font-weight: normal;
-     margin: 0;
+h1, h2, h3, h4, h5, h6 {
+    font-weight: normal;
+    margin: 0;
 }
- * {
-     box-sizing: border-box;
-     transition-duration: 200ms;
-     transition-property: background, fill, box-shadow;
+* {
+    box-sizing: border-box;
+    transition-duration: 200ms;
+    transition-property: background, fill, box-shadow;
 }
- [hidden] {
-     display: none;
-     visibility: hidden;
-     position: fixed;
+[hidden] {
+    display: none;
+    visibility: hidden;
+    position: fixed;
 }
 /* SIDE PANEL */
- @media screen and (max-width:50rem) {
-     body {
-         flex-direction: column-reverse;
-         height: auto;
+@media screen and (max-width:50rem) {
+    body {
+        flex-direction: column-reverse;
+        height: auto;
     }
-     aside {
-         max-width: 100%;
-    }
-}
- @media screen and (min-width:50rem) {
-     main, aside {
-         height: 100%;
-    }
-     aside {
-         height: auto;
-         width: 24rem;
+    aside {
+        max-width: 100%;
     }
 }
- aside label {
-     display: flex;
-     flex-direction: column;
-     margin: 1rem 0;
+@media screen and (min-width:50rem) {
+    aside,
+    main {
+        height: 100%;
+    }
+    aside {
+        height: auto;
+        width: 24rem;
+    }
 }
- #log {
-     font-family: inherit;
-     font-size: inherit;
-     background: none;
-     border: none;
+aside label {
+    display: flex;
+    flex-direction: column;
+    margin: 1rem 0;
 }
- h1 {
-     text-align: center;
-     font-size: 3rem;
-     font-style: italic;
-     filter: drop-shadow(0 .2rem white);
+#log {
+    font-family: inherit;
+    font-size: inherit;
+    background: none;
+    border: none;
 }
- h2 {
-     margin-top: 2rem;
-     padding-top: 1rem;
-     border-top: .1rem solid white;
+h1 {
+    text-align: center;
+    font-size: 3rem;
+    font-style: italic;
+    filter: drop-shadow(0 .2rem white);
 }
- main {
-     display: grid;
-     flex-grow: 1;
-     font-size: calc(2px + 2vmin);
-     grid-template-columns: repeat(auto-fit, 7em);
-     grid-auto-rows: 8em;
-     grid-gap: 1em;
-     justify-content: center;
+h2 {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 0.1em solid white;
 }
- .card {
-     --extra: var(--theme);
-     border-radius: 1em;
-     padding: 1em;
-     width: 100%;
-     height: 100%;
-     background: var(--fill);
-     box-shadow: .1rem .1rem var(--stroke);
-     cursor: pointer;
+main {
+    display: grid;
+    flex-grow: 1;
+    font-size: calc(2px + 2vmin);
+    grid-template-columns: repeat(auto-fit, 7em);
+    grid-auto-rows: 8em;
+    grid-gap: 1em;
+    justify-content: center;
 }
- .card:hover, .card:focus {
-     --extra: var(--fill);
-     box-shadow: .2rem .2rem var(--color);
+.card {
+    border-radius: 1em;
+    padding: 1em;
+    width: 100%;
+    height: 100%;
+    background: var(--fill);
+    box-shadow: 0.1em 0.1em 0 0 var(--stroke);
+    cursor: pointer;
 }
- .card#deck {
-     z-index: 100000;
-     order: 100000;
-     grid-column-start: -2;
-     display: flex;
-     flex-direction: column;
-     line-height: 1.3;
+.card > input {
+    position: absolute;
+    opacity: 0;
+    cursor: inherit;
 }
- .card#deck>:nth-child(1){
-     color: var(--red) 
+.card:focus-within,
+.card:hover {
+    box-shadow: 0.2em 0.2em 0 0 var(--color);
 }
- .card#deck>:nth-child(2){
-     color: var(--green);
-     font-size: 3em 
+.card#deck {
+    z-index: 100000;
+    order: 100000;
+    grid-column-start: -2;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+    user-select: none;
+    box-shadow: 0.1em 0.1em var(--theme), 0.2em 0.2em var(--stroke), 0.3em 0.3em var(--theme), 0.4em 0.4em var(--stroke), 0.5em 0.5em var(--theme), 0.6em 0.6em var(--stroke);
 }
- .card#deck>:nth-child(3){
-     color: var(--blue) 
+.card#deck:focus-within,
+.card#deck:hover {
+    box-shadow: 0.1em 0.1em var(--red), 0.2em 0.2em var(--red), 0.3em 0.3em var(--green), 0.4em 0.4em var(--green), 0.5em 0.5em var(--blue), 0.6em 0.6em var(--blue);
 }
- .card[data-checked=true] {
-     box-shadow: 0 0 0 .2rem var(--color);
+.card#deck > :nth-child(1) {
+    color: var(--red);
 }
- .card.fade {
-     animation: 500ms fade;
+.card#deck > :nth-child(2) {
+    color: var(--green);
+    font-size: 3em;
 }
- @keyframes fade {
-     0% { opacity: 0; }
-     100% { opacity: 1; }
+.card#deck > :nth-child(3) {
+    color: var(--blue);
 }
-.card>svg {
-     fill: var(--color);
-     stroke: var(--color);
-     stroke-width: 5;
+.card.checked,
+.card:active {
+    box-shadow: 0 0 0 0.2em var(--color);
+}
+.card.fade {
+    animation: 500ms fade;
+}
+@keyframes fade {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+.card > svg {
+    fill: var(--color);
+    stroke: var(--color);
+    stroke-width: 5;
 }
 /* number */
  .f0_0>svg>:first-child, .f0_0>svg>:last-child,
@@ -265,12 +279,12 @@ html{
 		<aside hidden>
 			<template id=template-card>
 				<label class=card>
+					<input type=checkbox>
 					<svg viewBox='0 0 140 160'>
 						<use class='shape' href='#c3_0' transform='translate(0 -50)'/>
 						<use class='shape' href='#c3_0' transform='translate(0 0)'/>
 						<use class='shape' href='#c3_0' transform='translate(0 50)'/>
 					</svg>
-					<input type=checkbox hidden>
 				</label>
 			</template>
 			<template id=template-player>
@@ -449,16 +463,18 @@ s.e.game.addEventListener('change',event => {
   const card = element.id
 
   // adding or removing a card?
-  const addition = element.dataset.checked = event.target.checked
+  const checked = event.target.checked
+  element.classList.toggle('checked', checked)
 
-  addition ? s.g.selected.push(card) : s.g.selected.splice(s.g.selected.indexOf(card))
+  checked ? s.g.selected.push(card) : s.g.selected.splice(s.g.selected.indexOf(card))
 
   // update sum
   _(event.target.parentElement.id)
-  .forEach((feature,index)=>s.g.sums[index][feature] += addition ? 1 : -1)
+  .forEach((feature,index)=>s.g.sums[index][feature] += checked ? 1 : -1)
 
   // if clique reached
   if(s.g.selected.length === s.c.clique) {
+        
     const valid = (
       s.g.sums.every(
       feature =>
@@ -510,14 +526,7 @@ function renderGame(){
     (s.g.deck.length < s.c.clique) ||
     (s.g.visible.length >= s.c.clique * s.s.features + s.c.clique) 
   )
-  const n = Math.min(s.g.deck.length,5)*2
-  s.e.deck.style.boxShadow = (
-    A(n).map(
-      (_, i) => `.${i}rem .${i}rem var(--${ i%2 ? 'stroke' : i/2 < s.c.clique ? 'extra' : 'theme'})`
-    ).join(',')
-  )
-  s.e.deck.style.transform = `translate(${-n/2}pt,${-n/2}pt)`
-
+  
   s.e.game.removeChild(s.e.deck)
 
   while(s.e.game.childElementCount > s.g.visible.length)
@@ -530,9 +539,10 @@ function renderGame(){
     const element = s.e.game.children[index]
     
     element.classList.remove('fade')
-
-    element.lastElementChild.checked =
-    element.dataset.checked = s.g.selected.includes(card)
+    
+    const checked = s.g.selected.includes(card)
+    element.firstElementChild.checked = checked
+    element.classList.toggle('checked', checked)
 
     if(element.id === card) return
 
@@ -577,6 +587,7 @@ function softResetGame(){
 
   )
   s.g.selected = []
+  document.activeElement.blur()
 
 }
 
